@@ -1,0 +1,236 @@
+body{
+    background-image:  url("../img/blackandgold.jfif");
+   text-align: center;
+   position: relative;
+   padding-bottom: 15em;
+   min-height: 100vh;
+}
+
+#apuestaTodo{
+    
+    height: 500px;
+    width: 200px;
+}
+
+
+.container-fluid{
+    margin-left: 70px;
+}
+
+.navbar-logo {
+  max-height: 80px;
+}
+
+.navbar{
+    background-image: url("../img/yellowtriangles.jpg");
+}
+
+.navbar-apuesta {
+  font-size: 50px;
+  font-weight:900;
+  color: black;
+  text-decoration: none;
+  text-align: left;
+}
+
+.navbar-todocom{
+  margin-top: 35px;  
+  font-size: 25px; 
+  font-weight:600;
+  color: black;
+  float: left;
+}
+
+.contenedor{
+    display: flex;
+    justify-content: center;
+}
+
+.card{
+    padding: 30px;
+    margin: 30px;
+}
+
+.mi-link-barra{
+     font-weight:600 ;
+  background-color:#ccc414;  
+  color: black;
+  text-decoration: none;
+  padding: 5px 10px;
+  border-radius: 5px; 
+}
+.mi-link-barra:hover{
+   background-color: #ad8a1f;
+}
+.nav-link {
+  padding: 5px 10px;
+  margin-top: 50px;   
+  font-weight:600 ;
+  background-color: #ccc414;
+  color: black;
+  border-radius: 5px;
+  margin-right: 10px;
+}
+
+.btn-danger{
+   padding: 5px 10px;
+  margin-top: 50px;
+}
+.nav-link:hover{
+   background-color: #D9D34F;
+}
+#bets{
+    justify-content: center;
+    text-align: center;
+    margin-top: 60px;
+    color: black;
+    margin-left: 500px;
+    margin-right: 500px;
+    background-color: #ccc414;
+    font-family: 'Oswald', sans-serif;
+}
+
+.d-block{
+    padding: 20px;
+    margin: auto;
+}
+
+
+#Formulario-InicioSesion{
+    justify-content: center;
+    display: grid;
+    text-align: left;
+    color: aliceblue;
+}
+
+#titulo{
+    padding: 50px;
+    text-align: center;
+    color: aliceblue;
+}
+
+#botonRegreso{
+    display: flex;
+    justify-content: center;
+    text-decoration: none;
+    color: #c69749;
+}
+
+footer {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background-color: black;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            font-size: 14px;
+        }
+        .footer-content {
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            flex-wrap: wrap; 
+            gap: 20px;
+        }
+
+        .footer-column {
+            flex: 1; 
+            text-align: left; 
+            max-width: calc(25% - 20px);
+        }
+
+        .footer-column h3 {
+            color: #c69749;
+            font-size: 18px;
+        }
+
+        .footer-column p {
+            margin: 0;
+            font-size: 12px
+        .btn-social {
+                font-size: 20px; 
+                margin: 5px; 
+            }
+        .btn-social i {
+                color: white;
+            }
+        }
+
+.tabla-grande {
+    font-size: 18px; /* Tamaño de fuente más grande */
+    border-collapse: collapse; /* Combina los bordes de las celdas */
+    width: 100%; /* Ancho de la tabla al 100% del contenedor */
+}
+
+.tabla-grande th, .tabla-grande td {
+    padding: 10px; /* Espaciado interno mayor */
+    text-align: center; /* Alineación de texto al centro */
+}
+
+@media (min-width: 768px) {
+.gradient-form {
+height: 100vh;
+}
+}
+#fondodenewusuario{
+    background-image: url(../img/iniciosesion.jpg);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+}
+
+#fondoNewUsuario{
+    background-image: url(../img/futboloscuro.jpg);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+}
+
+.partidos-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    color: black;
+    margin: 50px;
+}
+.partido-burbuja {
+    background-image: url('../img/202895-plain-yellow-and-white-background-graphic.jpg');
+    background-size: cover; /* Escalar la imagen para cubrir todo el contenedor */
+    background-position: center; /* Centrar la imagen */
+    background-repeat: no-repeat; /* Evitar la repetición de la imagen */
+    border: 2px solid #333;
+    padding: 10px;
+    text-align: center;
+    margin: 10px; 
+    border-radius: 10px;
+    width: calc(33.33% - 20px);
+    box-sizing: border-box;
+}
+
+.equipo-local, .equipo-visitante {
+    font-weight: bold;
+}
+
+.fecha {
+    color: darkgreen;
+}
+.btn-navbar {
+  background-color: #999999; /* Código de color naranja como ejemplo */
+  color: black; /* Color de texto */
+ font-weight: 900;
+}
+#lineadebajo-navbar{
+    border-color: white;/* Cambia el color a tu preferencia */
+  border-width: 3px; /* Establece el grosor de la línea */
+  margin: 0; /* Ajusta el margen si es necesario */
+}
+.mi-lista {
+    background-color: black;
+  padding: 6px; 
+}
+.footer-logo img {
+           width: 50px; 
+           height: auto; 
+            }
+.col-md-4 h4, .col-md-4 p, .form-control {
+    font-size: 20px; /* Ajusta el valor según el tamaño deseado */
+}

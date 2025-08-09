@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="4.0" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd">
+    <filter>
+        <description>filtro ususario no logueados</description>
+        <filter-name>loginfilter</filter-name>
+        <filter-class>com.mycompany.apuestatodook.filtros.loginfilter</filter-class>
+    </filter>
+    <filter>
+        <filter-name>AdminFilter</filter-name>
+        <filter-class>com.mycompany.apuestatodook.filtros.AdminFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>loginfilter</filter-name>
+        <url-pattern>/Billetera</url-pattern>
+        <url-pattern>/Apuesta/*</url-pattern>
+        <url-pattern>/Resultados</url-pattern>
+        <url-pattern>/ApuestasMostrar</url-pattern>
+        <url-pattern>/Perfil</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>AdminFilter</filter-name>
+        <url-pattern>/AllApuestas</url-pattern>
+    </filter-mapping>
+    <servlet>
+        <servlet-name>SvIndex</servlet-name>
+        <servlet-class>com.mycompany.apuestatodook.IndexServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>SvIndex</servlet-name>
+        <url-pattern>/Index</url-pattern>
+    </servlet-mapping>
+    <error-page>
+        <error-code>404</error-code>
+        <location>/WEB-INF/jsp/error404.jsp</location>
+    </error-page>
+</web-app>
