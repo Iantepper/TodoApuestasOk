@@ -4,25 +4,24 @@
 <c:import url="componentesHTML/ul-BarraDeportes.jsp" />
     
 <div class="contenedor">
-   <div class="card mb-3" style="max-width: 540px;">
+   <div class="card card-perfil mb-3" style="max-width: 540px;">  <!-- AGREGAR card-perfil -->
         <div class="row g-0">
           <div class="col-md-4">
               <img src="img/usuario-negro.jpg" style="width: 400px" class="img-fluid rounded-start" alt="...">
           </div>
             <div class="col-md-8">
             <div class="card-body">
-              <h5 class="card-title">Perfil</h5>
-              <p class="card-text">Usuario: ${usuario.usuario}</p>
-              <p class="card-text">Nombre: ${usuario.nombre}</p>
-              <p class="card-text">Apellido: ${usuario.apellido}</p>
-              <p class="card-text">DNI: ${usuario.dni}</p>
-              <p class="card-text">Edad: ${usuario.edad}</p>
-              <p class="card-text">Saldo: $${usuario.dinero}</p>
-              <p class="card-text"><small class="text-body-secondary">Last updated 3 mins ago</small></p>
+              <h5 class="card-title fw-bold">Tu Perfil</h5>
+              <p class="card-text"><strong>Usuario:</strong> ${usuario.usuario}</p>
+              <p class="card-text"><strong>Nombre:</strong> ${usuario.nombre}</p>
+              <p class="card-text"><strong>Apellido:</strong> ${usuario.apellido}</p>
+              <p class="card-text"><strong>DNI:</strong> ${usuario.dni}</p>
+              <p class="card-text"><strong>Edad:</strong> ${usuario.edad}</p>
+              <p class="card-text"><strong>Saldo:</strong> $${usuario.dinero}</p>
             </div>
           </div>
         </div>
-      </div> 
+      </div>
 </div>
 
 <c:import url="componentesHTML/footer.jsp" />

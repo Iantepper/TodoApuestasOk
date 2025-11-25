@@ -234,3 +234,49 @@ height: 100vh;
 .col-md-4 h4, .col-md-4 p, .form-control {
     font-size: 20px; /* Ajusta el valor según el tamaño deseado */
 }
+/* Estilos para billetera */
+.card-billetera {
+    background: linear-gradient(135deg, #FFD700, #D4AF37);
+    border: 2px solid #000;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.card-billetera .card-header {
+    background-color: #000;
+    color: #FFD700;
+    border-bottom: 2px solid #FFD700;
+}
+
+/* Estilos para perfil */
+.card-perfil {
+    background: linear-gradient(135deg, #FFD700, #D4AF37);
+    border: 2px solid #000;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.card-perfil .card-body {
+    color: #000;
+}
+
+/* Estilos generales para tarjetas con tema dorado */
+.card-dorado {
+    background: linear-gradient(135deg, #FFD700, #D4AF37);
+    border: 2px solid #000;
+    border-radius: 10px;
+    color: #000;
+}
+
+.btn-dorado {
+    background: linear-gradient(135deg, #FFD700, #D4AF37);
+    border: 2px solid #000;
+    color: #000;
+    font-weight: bold;
+}
+
+.btn-dorado:hover {
+    background: linear-gradient(135deg, #D4AF37, #B8860B);
+    border: 2px solid #000;
+    color: #000;
+}
