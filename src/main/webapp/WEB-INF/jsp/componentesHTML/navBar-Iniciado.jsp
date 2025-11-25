@@ -31,7 +31,6 @@
                     <c:otherwise>
                         <div class="collapse navbar-collapse" id="navbarNav">
                             <ul class="navbar-nav ms-auto">
-                        <!-- AGREGAR ESTA OPCIÓN PARA ADMIN -->
                         <c:if test="${userLogueado.puedeGestionarPartidos()}">
                             <li class="nav-item">
                                 <a href="${pageContext.request.contextPath}/Partidos?admin=true" class="nav-link">Admin Partidos</a>
@@ -40,18 +39,23 @@
                         <li class="nav-item" >
                           <a href="${pageContext.request.contextPath}/Partidos" class="nav-link">Partidos</a>
                         </li>
-                        <li class="nav-item" >
-                          <a href="${pageContext.request.contextPath}/Billetera" class="nav-link">billetera</a>
-                        </li>
+                        <c:if test="${!userLogueado.puedeGestionarPartidos()}">
+                            <li class="nav-item" >
+                              <a href="${pageContext.request.contextPath}/Billetera" class="nav-link">Billetera</a>
+                            </li>
+                        </c:if>
                         <li class="nav-item" >
                           <a href="${pageContext.request.contextPath}/Resultados" class="nav-link">Resultados</a>
                         </li>
                         <li class="nav-item" >
                           <a href="${pageContext.request.contextPath}/ApuestasMostrar" class="nav-link">Apuestas</a>
                         </li>
-                        <li class="nav-item" >
-                          <a href="${pageContext.request.contextPath}/Perfil" class="nav-link">perfil</a>
-                        </li>
+                        <!-- OCULTAR PERFIL PARA ADMIN -->
+                        <c:if test="${!userLogueado.puedeGestionarPartidos()}">
+                            <li class="nav-item" >
+                              <a href="${pageContext.request.contextPath}/Perfil" class="nav-link">Perfil</a>
+                            </li>
+                        </c:if>
                         <li class="nav-item" >
                           <a href="${pageContext.request.contextPath}/Salir" class="btn btn-danger">Logout</a>
                         </li>
