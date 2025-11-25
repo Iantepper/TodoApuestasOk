@@ -42,6 +42,6 @@ public class PerfilServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        // Puede quedar vacío o manejar actualizaciones de perfil
+        //actualizaciones de perfil
     }
 }

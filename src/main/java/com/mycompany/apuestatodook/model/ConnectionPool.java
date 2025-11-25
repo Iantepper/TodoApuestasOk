@@ -9,6 +9,7 @@ import org.apache.commons.dbcp2.BasicDataSource;
 
 public class ConnectionPool {
 
+
     private static BasicDataSource dataSource;
     private static ConnectionPool pool;/* */
     private Properties props;
@@ -50,7 +51,17 @@ public class ConnectionPool {
     }
 
     private void cargarPropiedades() {
-
+        /*
+            Creá un archivo 'DBConnection.properties' y colocalo dentro de la carpeta 'META-INF' en 'Other sources'
+            Su contenido será el siguiente:
+        
+            driverClassName=com.mysql.cj.jdbc.Driver
+            url=jdbc:mysql://direccionIPDondeEstaLaBD:3306/nombreDeTuBaseDeDatos
+            username=nombreDelUsuarioQueSeConectaraALaBaseDeDatos
+            password=claveDelUsuarioQueSeConectaraALaBaseDeDatos
+            tamInicial=NúmeroInicialDeConexionesEnElPool
+            tamMaximo=NúmeroMáximoDeConexionesEnElPool
+         */
         try (InputStream in = getClass().getClassLoader().getResourceAsStream("META-INF/DBConnection.properties")) {
             this.props.load(in);
         } catch (IOException ex) {

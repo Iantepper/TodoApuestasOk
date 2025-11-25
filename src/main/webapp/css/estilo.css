@@ -280,3 +280,54 @@ height: 100vh;
     border: 2px solid #000;
     color: #000;
 }
+/* Estilos para admin partidos */
+.admin-partidos-container {
+    background: linear-gradient(135deg, #FFD700, #D4AF37);
+    border: 3px solid #000;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    padding: 20px;
+    margin: 20px 0;
+}
+
+.admin-partidos-container .table {
+    background-color: white;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.admin-partidos-container .table thead {
+    background-color: #000;
+    color: #FFD700;
+}
+
+.admin-partidos-container .table th {
+    border-bottom: 2px solid #FFD700;
+    padding: 15px;
+    font-weight: bold;
+}
+
+.admin-partidos-container .table td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+}
+
+.admin-partidos-container .card {
+    background: rgba(255, 255, 255, 0.9);
+    border: 2px solid #000;
+    border-radius: 10px;
+}
+
+.admin-partidos-container .card-header {
+    background: linear-gradient(135deg, #000, #333);
+    color: #FFD700;
+    border-bottom: 2px solid #FFD700;
+}
+
+/* Estilos para los formularios de admin */
+.form-admin {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 15px;
+    border-radius: 10px;
+    border: 2px solid #000;
+}
