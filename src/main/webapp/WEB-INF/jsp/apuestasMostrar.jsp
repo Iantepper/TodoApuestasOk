@@ -15,19 +15,24 @@
 <div class="row">
     <div class="col-md-12">
         <div class="partidos-container">
-            <c:forEach items="${apuestas}" var="apuesta" varStatus="loop">
-                <div class="partido-burbuja">
-                    <div class="equipo-local">${apuesta.local}</div>
-                    <div class="equipo-visitante">${apuesta.visitante}</div>
-                    <div class="fecha">${apuesta.fecha}</div>
-                    <div class="por-quien">Por Quién: ${apuesta.por_quien}</div>
-                    <div class="monto">Monto: ${apuesta.monto}</div>
+    <c:forEach items="${apuestas}" var="apuesta" varStatus="loop">
+        <div class="partido-burbuja">
+            <c:if test="${esAdmin}">
+                <div class="usuario-apuesta" style="background: #f8f9fa; padding: 5px; border-radius: 5px; margin-bottom: 10px;">
+                    <strong>Usuario:</strong> ${apuesta.nombreUsuario}
                 </div>
-            </c:forEach>
+            </c:if>
+            <div class="equipo-local">${apuesta.local}</div>
+            <div class="equipo-visitante">${apuesta.visitante}</div>
+            <div class="fecha">${apuesta.fecha}</div>
+            <div class="por-quien">Por: ${apuesta.por_quien}</div>
+            <div class="monto">Monto: $${apuesta.monto}</div>
         </div>
+    </c:forEach>
+</div>
     </div>
 </div>
-        <c:import url="componentesHTML/footer.jsp" /> 
-    </body>
-</html>
 
+<c:import url="componentesHTML/footer.jsp" /> 
+</body>
+</html>

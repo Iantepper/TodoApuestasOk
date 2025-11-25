@@ -18,24 +18,22 @@ public class ApuestaMostrarServlet extends HttpServlet {
             throws ServletException, IOException {
         Usuario usuario = (Usuario) request.getSession().getAttribute("userLogueado");
 
-        if (usuario != null && usuario.getTipo().equalsIgnoreCase("admin"))
-            {
+        if (usuario != null && "admin".equalsIgnoreCase(usuario.getTipo())) {
             request.setAttribute("esAdmin", true);
             request.setAttribute("mensajeAdmin", "Modo Administrador");    
             ApuestaDAO apuestaDAO = new ApuestaDAO();
             List<Apuesta> apuestas = apuestaDAO.getAllApuestasConResultado();
             request.setAttribute("apuestas", apuestas);
             request.getRequestDispatcher("WEB-INF/jsp/apuestasMostrar.jsp").forward(request, response);
-        } else if (usuario != null && usuario.getTipo().equalsIgnoreCase("user")) 
-            {
+        } else if (usuario != null && "user".equalsIgnoreCase(usuario.getTipo())) {
             ApuestaDAO apuestaDAO = new ApuestaDAO();
             List<Apuesta> apuestas = apuestaDAO.getApuestasConResultadoPorUsuario(usuario.getIDusuario());
             request.setAttribute("apuestas", apuestas);
             request.getRequestDispatcher("WEB-INF/jsp/apuestasMostrar.jsp").forward(request, response);
-        }else {
+        } else {
             request.setAttribute("hayError", true);
             request.setAttribute("mensajeError", "Por favor, inicie sesión.");
-            request.getRequestDispatcher("WEB-INF/jsp/iniciosesion.jsp").forward(request, response);
+            request.getRequestDispatcher("WEB-INF/jsp/inicioSesion.jsp").forward(request, response);
         }
     }
 }

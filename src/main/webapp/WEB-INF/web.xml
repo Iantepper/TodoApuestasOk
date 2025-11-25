@@ -15,7 +15,6 @@
         <filter-class>com.mycompany.apuestatodook.filtros.AdminFilter</filter-class>
     </filter>
 
-    
     <filter-mapping>
       <filter-name>loginfilter</filter-name>
       <url-pattern>/Billetera</url-pattern>
@@ -25,9 +24,9 @@
       <url-pattern>/Perfil</url-pattern>
     </filter-mapping>
     
-
     <filter-mapping>
         <filter-name>AdminFilter</filter-name>
+        <url-pattern>/Admin/*</url-pattern>
         <url-pattern>/AllApuestas</url-pattern>
     </filter-mapping>
 

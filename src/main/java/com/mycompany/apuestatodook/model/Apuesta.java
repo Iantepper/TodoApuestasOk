@@ -12,6 +12,7 @@ public class Apuesta {
     private String local;
     private String visitante;
     private String fecha;
+    private String nombreUsuario;
 
     public Apuesta(String local, String visitante, String fecha, int monto, String por_quien) {
         this.local = local;
@@ -95,6 +96,35 @@ public class Apuesta {
 
     public void setIdPartido(int idPartido) {
         this.idPartido = idPartido;
+    }
+
+        public void setLocal(String local) {
+        this.local = local;
+    }
+
+    public void setVisitante(String visitante) {
+        this.visitante = visitante;
+    }
+
+    public void setFecha(String fecha) {
+        this.fecha = fecha;
+    }
+
+    public String getNombreUsuario() {
+        return nombreUsuario;
+    }
+
+    public void setNombreUsuario(String nombreUsuario) {
+        this.nombreUsuario = nombreUsuario;
+    }
+
+    public String getEstadoLegible() {
+        switch (estado) {
+            case 'G': return "Ganada";
+            case 'P': return "Perdida";
+            case 'A': return "Activa";
+            default: return "Desconocido";
+        }
     }
 
 }

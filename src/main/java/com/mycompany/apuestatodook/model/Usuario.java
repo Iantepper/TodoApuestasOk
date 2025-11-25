@@ -2,13 +2,16 @@
 package com.mycompany.apuestatodook.model;
 
 
-public class Usuario{
-
+public class Usuario {
     private int IDusuario;
     private String usuario;
     private String contrasenia;
     private double dinero;
     private String tipo;
+
+    // Constantes para tipos de usuario
+    public static final String TIPO_ADMIN = "admin";
+    public static final String TIPO_USER = "user";
 
     public Usuario(int IDusuario, String usuario, String contrasenia, double dinero, String tipo) {
         this.IDusuario = IDusuario;
@@ -18,10 +21,17 @@ public class Usuario{
         this.tipo = tipo;
     }
     
-    
-
     public String getTipo() {
         return tipo;
+    }
+
+    // Métodos helper para verificar tipo
+    public boolean esAdmin() {
+        return TIPO_ADMIN.equalsIgnoreCase(this.tipo);
+    }
+
+    public boolean esUser() {
+        return TIPO_USER.equalsIgnoreCase(this.tipo);
     }
     
     public Usuario(int IDusuario, String usuario, String contrasenia) {

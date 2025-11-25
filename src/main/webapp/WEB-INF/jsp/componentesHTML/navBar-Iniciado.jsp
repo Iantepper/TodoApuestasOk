@@ -31,6 +31,12 @@
                     <c:otherwise>
                         <div class="collapse navbar-collapse" id="navbarNav">
                             <ul class="navbar-nav ms-auto">
+                        <!-- AGREGAR ESTA OPCIÓN PARA ADMIN -->
+                        <c:if test="${userLogueado.tipo == 'admin'}">
+                            <li class="nav-item">
+                                <a href="${pageContext.request.contextPath}/Partidos?admin=true" class="nav-link">Admin Partidos</a>
+                            </li>
+                        </c:if>
                         <li class="nav-item" >
                           <a href="${pageContext.request.contextPath}/Partidos" class="nav-link">Partidos</a>
                         </li>
@@ -57,6 +63,6 @@
 
     
   </div>
-</nav
+</nav>
 
 <hr id="lineadebajo-navbar">
