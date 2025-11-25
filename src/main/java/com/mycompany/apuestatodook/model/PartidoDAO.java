@@ -123,6 +123,64 @@ public void delete(int idPartido) {
     } catch (SQLException ex) {
         throw new RuntimeException("Error al crear resultado", ex);
     }
+    }
+    
+    public void actualizarResultado(int idPartido, String ganador) {
+    // Primero verificar si ya existe un resultado
+    String checkQuery = "SELECT id_resultado FROM resultado WHERE fk_id_partido = ?";
+    String updateQuery = "UPDATE resultado SET ganador = ? WHERE fk_id_partido = ?";
+    String insertQuery = "INSERT INTO resultado (ganador, fk_id_partido) VALUES (?, ?)";
+    
+    try (Connection con = ConnectionPool.getInstance().getConnection()) {
+        
+        // Verificar si ya existe resultado
+        boolean existeResultado = false;
+        try (PreparedStatement checkStmt = con.prepareStatement(checkQuery)) {
+            checkStmt.setInt(1, idPartido);
+            try (ResultSet rs = checkStmt.executeQuery()) {
+                existeResultado = rs.next();
+            }
+        }
+        
+        // Actualizar o insertar
+        if (existeResultado) {
+            try (PreparedStatement updateStmt = con.prepareStatement(updateQuery)) {
+                updateStmt.setString(1, ganador);
+                updateStmt.setInt(2, idPartido);
+                updateStmt.executeUpdate();
+            }
+        } else {
+            try (PreparedStatement insertStmt = con.prepareStatement(insertQuery)) {
+                insertStmt.setString(1, ganador);
+                insertStmt.setInt(2, idPartido);
+                insertStmt.executeUpdate();
+            }
+        }
+        
+    } catch (SQLException ex) {
+        throw new RuntimeException("Error al actualizar resultado", ex);
+    }
+}
+
+public Resultado getResultadoPorPartido(int idPartido) {
+    String query = "SELECT * FROM resultado WHERE fk_id_partido = ?";
+    try (Connection con = ConnectionPool.getInstance().getConnection();
+         PreparedStatement ps = con.prepareStatement(query)) {
+        
+        ps.setInt(1, idPartido);
+        try (ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return new Resultado(
+                    rs.getInt("id_resultado"),
+                    rs.getString("ganador"),
+                    rs.getInt("fk_id_partido")
+                );
+            }
+        }
+    } catch (SQLException ex) {
+        throw new RuntimeException("Error al obtener resultado", ex);
+    }
+    return null;
 }
     
 }
