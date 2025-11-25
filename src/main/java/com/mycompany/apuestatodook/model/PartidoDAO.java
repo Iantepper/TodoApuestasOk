@@ -161,6 +161,21 @@ public void delete(int idPartido) {
         throw new RuntimeException("Error al actualizar resultado", ex);
     }
 }
+    
+    public List<Partido> getPartidosFuturos() {
+    List<Partido> partidos = new ArrayList<>();
+    String query = "SELECT * FROM partido WHERE fecha > NOW() ORDER BY fecha ASC";
+    try(Connection con = ConnectionPool.getInstance().getConnection();
+        PreparedStatement ps = con.prepareStatement(query);
+        ResultSet rs = ps.executeQuery();) {
+        while(rs.next()){
+            partidos.add(rsRowToPartido(rs));
+        }
+    } catch(SQLException ex){
+        throw new RuntimeException(ex);
+    }
+    return partidos;
+}
 
 public Resultado getResultadoPorPartido(int idPartido) {
     String query = "SELECT * FROM resultado WHERE fk_id_partido = ?";

@@ -9,6 +9,7 @@ import java.io.IOException;
 import com.mycompany.apuestatodook.model.Partido;
 import com.mycompany.apuestatodook.model.PartidoDAO;
 import com.mycompany.apuestatodook.model.Usuario;
+import com.mycompany.apuestatodook.model.UsuarioBase;
 import com.mycompany.apuestatodook.model.UsuarioDAO;
 
 @WebServlet(name = "SvApuesta", urlPatterns = {"/Apuesta"})
@@ -18,14 +19,22 @@ public class ApuestaServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        int partidoId = Integer.parseInt(request.getParameter("id"));
+            UsuarioBase usuario = (UsuarioBase) request.getSession().getAttribute("userLogueado");
+    
+
+    if (usuario != null && usuario.puedeGestionarPartidos()) {
+        response.sendRedirect(request.getContextPath() + "/Partidos?admin=true");
+        return;
+    }
+    
+    int partidoId = Integer.parseInt(request.getParameter("id"));
         
         PartidoDAO PartidoDAO = new PartidoDAO();
         
         Partido partido = PartidoDAO.getPartidoPorId(partidoId);      
         
         request.setAttribute("partido", partido);
-        Usuario usuario = (Usuario) request.getSession().getAttribute("userLogueado");
+
         
         UsuarioDAO usuarioDAO = new UsuarioDAO();
         double dineroUsuario = usuarioDAO.getDineroPorIdUsuario(usuario.getId());
