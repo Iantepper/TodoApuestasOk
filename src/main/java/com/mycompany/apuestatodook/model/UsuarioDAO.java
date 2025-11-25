@@ -8,75 +8,68 @@ import java.sql.Statement;
 import java.util.LinkedList;
 import java.util.List;
 
-
 public class UsuarioDAO {
 
-     
- public List<UsuarioBase> getAll() {
-        List<UsuarioBase>usuarios = new LinkedList();
+    public List<UsuarioBase> getAll() {
+        List<UsuarioBase> usuarios = new LinkedList();
         String query = "SELECT * FROM usuario";
         try(Connection con = ConnectionPool.getInstance().getConnection();
         PreparedStatement ps = con.prepareStatement(query);
-        ResultSet rs = ps.executeQuery();)
-        {
+        ResultSet rs = ps.executeQuery();) {
             while(rs.next()){
                 usuarios.add(rsRowToUsuario(rs));
             }
-        }catch(SQLException ex){
+        } catch(SQLException ex){
             throw new RuntimeException(ex);
         }
         return usuarios;
     }
- 
+
     public UsuarioBase autenticar(String usuario, String contrasenia) {
-    String query = "SELECT id_usuario, usuario, contrasenia, dinero, tipo FROM usuario WHERE usuario = ? AND contrasenia = ?";
-    UsuarioBase validado = null;
-    try (Connection con = ConnectionPool.getInstance().getConnection(); 
-         PreparedStatement preparedStatement = con.prepareStatement(query)) {
-        preparedStatement.setString(1, usuario);
-        preparedStatement.setString(2, contrasenia);
-        try (ResultSet resultSet = preparedStatement.executeQuery()) {
-            if (resultSet.next()) {
-                validado = rsRowToUsuario(resultSet);
-                System.out.println(validado);
-            }
-        }
-    } catch (SQLException ex) {
-        throw new RuntimeException(ex);
-    }
-    return validado;
-}
-
-private UsuarioBase rsRowToUsuario(ResultSet rs) throws SQLException {
-    int IDusuario = rs.getInt("id_usuario");
-    String usuario = rs.getString("usuario");
-    String contrasenia = rs.getString("contrasenia");
-    String tipo = rs.getString("tipo");
-    double dinero = rs.getDouble("dinero");
-
-    if ("admin".equalsIgnoreCase(tipo)) {
-        return new Admin(IDusuario, usuario, contrasenia, "Administrador del Sistema");
-    } else {
-
-        try {
-            Persona persona = getPersonaPorUsuario(IDusuario);
-            if (persona != null) {
-                return new Usuario(IDusuario, usuario, contrasenia, dinero, 
-                                 persona.getDni(), persona.getNombre(), 
-                                 persona.getApellido(), persona.getEdad());
-            }
-        } catch (Exception e) {
-            // Si falla, crear usuario solo con datos básicos
-        }
-        return new Usuario(IDusuario, usuario, contrasenia, dinero, "", "", "", 0);
-    }
-}
-
-    public int add(String usuario, String contrasenia) {
-        String query = "INSERT INTO usuario (usuario, contrasenia) VALUES (?, ?)";
-        try (Connection con = ConnectionPool.getInstance().getConnection(); PreparedStatement preparedStatement = con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+        String query = "SELECT id_usuario, usuario, contrasenia, dinero, tipo FROM usuario WHERE usuario = ? AND contrasenia = ?";
+        UsuarioBase validado = null;
+        try (Connection con = ConnectionPool.getInstance().getConnection(); 
+             PreparedStatement preparedStatement = con.prepareStatement(query)) {
             preparedStatement.setString(1, usuario);
             preparedStatement.setString(2, contrasenia);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    validado = rsRowToUsuario(resultSet);
+                    System.out.println(validado);
+                }
+            }
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
+        }
+        return validado;
+    }
+
+    private UsuarioBase rsRowToUsuario(ResultSet rs) throws SQLException {
+        int IDusuario = rs.getInt("id_usuario");
+        String usuario = rs.getString("usuario");
+        String contrasenia = rs.getString("contrasenia");
+        String tipo = rs.getString("tipo");
+        double dinero = rs.getDouble("dinero");
+
+        if ("admin".equalsIgnoreCase(tipo)) {
+            return new Admin(IDusuario, usuario, contrasenia, "Administrador del Sistema");
+        } else {
+ 
+            return new Usuario(IDusuario, usuario, contrasenia, dinero, "", "", "", 0);
+        }
+    }
+
+ 
+    public int addConDatosPersonales(String usuario, String contrasenia, String nombre, String apellido, int edad, String dni) {
+        String query = "INSERT INTO usuario (usuario, contrasenia, nombre, apellido, edad, dni) VALUES (?, ?, ?, ?, ?, ?)";
+        try (Connection con = ConnectionPool.getInstance().getConnection(); 
+             PreparedStatement preparedStatement = con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+            preparedStatement.setString(1, usuario);
+            preparedStatement.setString(2, contrasenia);
+            preparedStatement.setString(3, nombre);
+            preparedStatement.setString(4, apellido);
+            preparedStatement.setInt(5, edad);
+            preparedStatement.setString(6, dni);
             preparedStatement.executeUpdate();
 
             ResultSet key = preparedStatement.getGeneratedKeys();
@@ -89,20 +82,14 @@ private UsuarioBase rsRowToUsuario(ResultSet rs) throws SQLException {
             throw new RuntimeException(ex);
         }
     }
-    
-    
-    public double getDineroPorIdUsuario (Integer Id) {
-        
+
+    public double getDineroPorIdUsuario(Integer Id) {
         String query = "SELECT dinero FROM usuario WHERE id_usuario = ?";
-        
         double dinero = 0.0;
-        
-        try (Connection con = ConnectionPool.getInstance().getConnection(); PreparedStatement preparedStatement = con.prepareStatement(query)) {
-            
+        try (Connection con = ConnectionPool.getInstance().getConnection(); 
+             PreparedStatement preparedStatement = con.prepareStatement(query)) {
             preparedStatement.setInt(1, Id);
-            
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                
                 if (resultSet.next()) { 
                     dinero = resultSet.getDouble(1);
                 }  
@@ -110,46 +97,25 @@ private UsuarioBase rsRowToUsuario(ResultSet rs) throws SQLException {
         } catch (SQLException ex) {
             throw new RuntimeException(ex);
         }
-        
         return dinero;
     }
- 
- 
-        public void updateDinero(Usuario usuario) {
-        String query = "UPDATE usuario SET dinero = ? WHERE id_usuario = ?";
-        try (Connection con = ConnectionPool.getInstance().getConnection();
-             PreparedStatement preparedStatement = con.prepareStatement(query)) {
-            preparedStatement.setDouble(1, usuario.getDinero());
-            preparedStatement.setInt(2, usuario.getId());
-            preparedStatement.executeUpdate();
-            System.out.println("Actualización del dinero del usuario en la base de datos. Nuevo saldo: " + usuario.getDinero());
-        } catch (SQLException ex) {
-            System.out.println("Error al actualizar el dinero del usuario: " + ex.getMessage());     
-            throw new RuntimeException(ex);
-        }
-    }
-        private Persona getPersonaPorUsuario(int idUsuario) {
-    String query = "SELECT * FROM persona WHERE fk_id_usuario = ?";
-    try (Connection con = ConnectionPool.getInstance().getConnection();
-         PreparedStatement ps = con.prepareStatement(query)) {
-        ps.setInt(1, idUsuario);
-        try (ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) {
-                return new Persona(
-                    rs.getInt("id_persona"),
-                    rs.getString("dni"),
-                    rs.getString("nombre"),
-                    rs.getString("apellido"),
-                    rs.getInt("edad"),
-                    idUsuario
-                );
+
+    public void updateDinero(UsuarioBase usuario) {
+
+        if (usuario instanceof Usuario) {
+            Usuario usuarioNormal = (Usuario) usuario;
+            String query = "UPDATE usuario SET dinero = ? WHERE id_usuario = ?";
+            try (Connection con = ConnectionPool.getInstance().getConnection();
+                 PreparedStatement preparedStatement = con.prepareStatement(query)) {
+                preparedStatement.setDouble(1, usuarioNormal.getDinero());
+                preparedStatement.setInt(2, usuarioNormal.getId());
+                preparedStatement.executeUpdate();
+            } catch (SQLException ex) {
+                throw new RuntimeException("Error al actualizar dinero", ex);
             }
         }
-    } catch (SQLException ex) {
-        // Si hay error, retornar null
-    }
-    return null;
-}
-}
 
+    }
+    
+}
 

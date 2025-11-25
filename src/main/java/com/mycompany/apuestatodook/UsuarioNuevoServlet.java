@@ -1,7 +1,5 @@
-
 package com.mycompany.apuestatodook;
 
-import com.mycompany.apuestatodook.model.PersonaDAO;
 import com.mycompany.apuestatodook.model.UsuarioDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -23,30 +21,33 @@ public class UsuarioNuevoServlet extends HttpServlet {
         String edadStr = request.getParameter("edad");
         int edad = 0;
         
-        if(edadStr != ""){
+        if(edadStr != null && !edadStr.isEmpty()){
           edad = Integer.parseInt(edadStr);  
         }
         
         String dni = request.getParameter("dni");
 
-         if((nombre.equals("")) || ("" == usuario) || "" == password || "" == cpassword || "" == apellido || "" == dni) {
+        if((nombre == null || nombre.isEmpty()) || (usuario == null || usuario.isEmpty()) || 
+           password == null || password.isEmpty() || cpassword == null || cpassword.isEmpty() || 
+           apellido == null || apellido.isEmpty() || dni == null || dni.isEmpty()) {
            request.setAttribute("hayError", true);
             request.setAttribute("mensajeError", "Se deben completar todos los campos.");
             request.getRequestDispatcher("/WEB-INF/jsp/crearUsuario.jsp").forward(request, response);
-         }
-        else if (edad < 18) {
+            return;
+        } else if (edad < 18) {
             request.setAttribute("hayError", true);
             request.setAttribute("mensajeError", "La edad debe ser mayor o igual a 18 años.");
             request.getRequestDispatcher("/WEB-INF/jsp/crearUsuario.jsp").forward(request, response);
+            return;
         } else if (!password.equals(cpassword)) {
             request.setAttribute("hayError", true);
             request.setAttribute("mensajeError", "Las contraseñas no coinciden.");
             request.getRequestDispatcher("/WEB-INF/jsp/crearUsuario.jsp").forward(request, response);
+            return;
         } else {
             UsuarioDAO usuarioDAO = new UsuarioDAO();
-            int idUsuario = usuarioDAO.add(usuario, password);
-            PersonaDAO personaDAO = new PersonaDAO();
-            personaDAO.agregarPersona(idUsuario, nombre, apellido, edad, dni);
+ 
+            int idUsuario = usuarioDAO.addConDatosPersonales(usuario, password, nombre, apellido, edad, dni);
             request.getRequestDispatcher("/WEB-INF/jsp/usuarioCreado.jsp").forward(request, response);
         }
     }
