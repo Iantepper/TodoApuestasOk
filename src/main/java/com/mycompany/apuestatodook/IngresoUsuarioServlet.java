@@ -1,6 +1,6 @@
 package com.mycompany.apuestatodook;
 
-import com.mycompany.apuestatodook.model.Usuario;
+import com.mycompany.apuestatodook.model.UsuarioBase;
 import com.mycompany.apuestatodook.model.UsuarioDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -26,7 +26,7 @@ public class IngresoUsuarioServlet extends HttpServlet {
             throws ServletException, IOException {
         String n = request.getParameter("usuario");
         String p = request.getParameter("Contraseña");
-        Usuario user = new UsuarioDAO().autenticar(n, p);
+        UsuarioBase user = new UsuarioDAO().autenticar(n, p);
         if (user != null) {
       
             String haciaDondeIba = request.getParameter("deDondeViene");

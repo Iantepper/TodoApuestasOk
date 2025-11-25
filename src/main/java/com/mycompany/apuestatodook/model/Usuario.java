@@ -1,79 +1,47 @@
-
 package com.mycompany.apuestatodook.model;
 
-
-public class Usuario {
-    private int IDusuario;
-    private String usuario;
-    private String contrasenia;
+public class Usuario extends UsuarioBase {
     private double dinero;
-    private String tipo;
+    private String dni;
+    private String nombre;
+    private String apellido;
+    private int edad;
 
-    // Constantes para tipos de usuario
-    public static final String TIPO_ADMIN = "admin";
-    public static final String TIPO_USER = "user";
-
-    public Usuario(int IDusuario, String usuario, String contrasenia, double dinero, String tipo) {
-        this.IDusuario = IDusuario;
-        this.usuario = usuario;
-        this.contrasenia = contrasenia;
+    public Usuario(int id, String usuario, String contrasenia, double dinero, 
+                   String dni, String nombre, String apellido, int edad) {
+        super(id, usuario, contrasenia, "user");
         this.dinero = dinero;
-        this.tipo = tipo;
-    }
-    
-    public String getTipo() {
-        return tipo;
-    }
-
-    // Métodos helper para verificar tipo
-    public boolean esAdmin() {
-        return TIPO_ADMIN.equalsIgnoreCase(this.tipo);
-    }
-
-    public boolean esUser() {
-        return TIPO_USER.equalsIgnoreCase(this.tipo);
-    }
-    
-    public Usuario(int IDusuario, String usuario, String contrasenia) {
-        this.usuario = usuario;
-        this.contrasenia = contrasenia;
-        this.IDusuario= IDusuario;
-    }
-
-    public double getDinero() {
-        return dinero;
-    }
-
-    public int getIDusuario() {
-        return IDusuario;
-    }
-
-    public String getUsuario() {
-        return usuario;
-    }
-
-    public void setDinero(double dinero) {
-        this.dinero = dinero;
-    }
-
-
-    public String getNombre() {
-        return usuario;
-    }
-
-    public String getContrasena() {
-        return contrasenia;
-    }
-
-    public void setIDusuario(int IDusuario) {
-        this.IDusuario = IDusuario;
+        this.dni = dni;
+        this.nombre = nombre;
+        this.apellido = apellido;
+        this.edad = edad;
     }
 
     @Override
-    public String toString() {
-        return "Usuario{" + "IDusuario=" + IDusuario + ", usuario=" + usuario + ", contrasenia=" + contrasenia + ", dinero=" + dinero + '}';
+    public boolean puedeApostar() {
+        return true;
     }
 
-}
+    @Override
+    public boolean puedeGestionarPartidos() {
+        return false;
+    }
 
+    @Override
+    public boolean puedeVerTodasLasApuestas() {
+        return false;
+    }
+
+    // Getters específicos
+    public double getDinero() { return dinero; }
+    public void setDinero(double dinero) { this.dinero = dinero; }
+    public String getDni() { return dni; }
+    public String getNombre() { return nombre; }
+    public String getApellido() { return apellido; }
+    public int getEdad() { return edad; }
+    
+    public boolean tieneSaldoSuficiente(double monto) {
+        return this.dinero >= monto;
+    }
+}
 

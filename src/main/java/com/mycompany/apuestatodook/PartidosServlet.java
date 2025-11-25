@@ -3,6 +3,7 @@ package com.mycompany.apuestatodook;
 import com.mycompany.apuestatodook.model.Partido;
 import com.mycompany.apuestatodook.model.PartidoDAO;
 import com.mycompany.apuestatodook.model.Usuario;
+import com.mycompany.apuestatodook.model.UsuarioBase;
 import com.mycompany.apuestatodook.model.Resultado;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -23,8 +24,8 @@ protected void doGet(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException {
     
     // Verificar si es admin y quiere ver vista admin
-    Usuario usuario = (Usuario) request.getSession().getAttribute("userLogueado");
-    boolean esAdmin = usuario != null && "admin".equals(usuario.getTipo());
+    UsuarioBase usuario = (UsuarioBase) request.getSession().getAttribute("userLogueado");
+    boolean esAdmin = usuario != null && usuario.puedeGestionarPartidos();
     boolean modoAdmin = "true".equals(request.getParameter("admin"));
     
     // Manejar eliminación si es admin
@@ -56,8 +57,8 @@ protected void doGet(HttpServletRequest request, HttpServletResponse response)
 protected void doPost(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException {
     
-    Usuario usuario = (Usuario) request.getSession().getAttribute("userLogueado");
-    if (usuario == null || !"admin".equals(usuario.getTipo())) {
+    UsuarioBase usuario = (UsuarioBase) request.getSession().getAttribute("userLogueado");
+    if (usuario == null || !usuario.puedeGestionarPartidos()) {
         response.sendRedirect(request.getContextPath() + "/Index?action=inicioSesion");
         return;
     }
@@ -96,11 +97,10 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response)
 // Método para validar fecha futura
 private boolean esFechaFutura(String fechaStr) {
     try {
-        // Formato: "2024-11-25T21:00"
         LocalDateTime fechaPartido = LocalDateTime.parse(fechaStr.replace(" ", "T"));
         return fechaPartido.isAfter(LocalDateTime.now());
     } catch (Exception e) {
-        return false; // Si hay error en el formato, no permitir
+        return false;
     }
 }
 }

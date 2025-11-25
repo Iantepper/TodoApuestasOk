@@ -28,10 +28,12 @@ public class ApuestaServlet extends HttpServlet {
         Usuario usuario = (Usuario) request.getSession().getAttribute("userLogueado");
         
         UsuarioDAO usuarioDAO = new UsuarioDAO();
-        double dineroUsuario = usuarioDAO.getDineroPorIdUsuario(usuario.getIDusuario());
+        double dineroUsuario = usuarioDAO.getDineroPorIdUsuario(usuario.getId());
 
-        usuario.setDinero(dineroUsuario);
-        request.getSession().setAttribute("userLogueado", usuario);
+        if (usuario instanceof Usuario) {
+        Usuario usuarioNormal = (Usuario) usuario;
+        usuarioNormal.setDinero(dineroUsuario);
+        }
         
         request.setAttribute("dineroUsuario", dineroUsuario);
         

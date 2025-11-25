@@ -12,8 +12,8 @@ import java.util.List;
 public class UsuarioDAO {
 
      
- public List<Usuario> getAll() {
-        List<Usuario>usuarios = new LinkedList();
+ public List<UsuarioBase> getAll() {
+        List<UsuarioBase>usuarios = new LinkedList();
         String query = "SELECT * FROM usuario";
         try(Connection con = ConnectionPool.getInstance().getConnection();
         PreparedStatement ps = con.prepareStatement(query);
@@ -28,9 +28,9 @@ public class UsuarioDAO {
         return usuarios;
     }
  
-    public Usuario autenticar(String usuario, String contrasenia) {
+    public UsuarioBase autenticar(String usuario, String contrasenia) {
     String query = "SELECT id_usuario, usuario, contrasenia, dinero, tipo FROM usuario WHERE usuario = ? AND contrasenia = ?";
-    Usuario validado = null;
+    UsuarioBase validado = null;
     try (Connection con = ConnectionPool.getInstance().getConnection(); 
          PreparedStatement preparedStatement = con.prepareStatement(query)) {
         preparedStatement.setString(1, usuario);
@@ -47,16 +47,29 @@ public class UsuarioDAO {
     return validado;
 }
 
-private Usuario rsRowToUsuario(ResultSet rs) throws SQLException {
+private UsuarioBase rsRowToUsuario(ResultSet rs) throws SQLException {
     int IDusuario = rs.getInt("id_usuario");
     String usuario = rs.getString("usuario");
     String contrasenia = rs.getString("contrasenia");
-    
- 
-    double dinero = rs.getDouble("dinero");
     String tipo = rs.getString("tipo");
+    double dinero = rs.getDouble("dinero");
 
-    return new Usuario(IDusuario, usuario, contrasenia, dinero, tipo);
+    if ("admin".equalsIgnoreCase(tipo)) {
+        return new Admin(IDusuario, usuario, contrasenia, "Administrador del Sistema");
+    } else {
+
+        try {
+            Persona persona = getPersonaPorUsuario(IDusuario);
+            if (persona != null) {
+                return new Usuario(IDusuario, usuario, contrasenia, dinero, 
+                                 persona.getDni(), persona.getNombre(), 
+                                 persona.getApellido(), persona.getEdad());
+            }
+        } catch (Exception e) {
+            // Si falla, crear usuario solo con datos básicos
+        }
+        return new Usuario(IDusuario, usuario, contrasenia, dinero, "", "", "", 0);
+    }
 }
 
     public int add(String usuario, String contrasenia) {
@@ -107,7 +120,7 @@ private Usuario rsRowToUsuario(ResultSet rs) throws SQLException {
         try (Connection con = ConnectionPool.getInstance().getConnection();
              PreparedStatement preparedStatement = con.prepareStatement(query)) {
             preparedStatement.setDouble(1, usuario.getDinero());
-            preparedStatement.setInt(2, usuario.getIDusuario());
+            preparedStatement.setInt(2, usuario.getId());
             preparedStatement.executeUpdate();
             System.out.println("Actualización del dinero del usuario en la base de datos. Nuevo saldo: " + usuario.getDinero());
         } catch (SQLException ex) {
@@ -115,6 +128,28 @@ private Usuario rsRowToUsuario(ResultSet rs) throws SQLException {
             throw new RuntimeException(ex);
         }
     }
+        private Persona getPersonaPorUsuario(int idUsuario) {
+    String query = "SELECT * FROM persona WHERE fk_id_usuario = ?";
+    try (Connection con = ConnectionPool.getInstance().getConnection();
+         PreparedStatement ps = con.prepareStatement(query)) {
+        ps.setInt(1, idUsuario);
+        try (ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return new Persona(
+                    rs.getInt("id_persona"),
+                    rs.getString("dni"),
+                    rs.getString("nombre"),
+                    rs.getString("apellido"),
+                    rs.getInt("edad"),
+                    idUsuario
+                );
+            }
+        }
+    } catch (SQLException ex) {
+        // Si hay error, retornar null
+    }
+    return null;
+}
 }
 
 

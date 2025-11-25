@@ -2,7 +2,7 @@ package com.mycompany.apuestatodook;
 
 import com.mycompany.apuestatodook.model.Apuesta;
 import com.mycompany.apuestatodook.model.ApuestaDAO;
-import com.mycompany.apuestatodook.model.Usuario;
+import com.mycompany.apuestatodook.model.UsuarioBase;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -16,9 +16,9 @@ public class ApuestaMostrarServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        Usuario usuario = (Usuario) request.getSession().getAttribute("userLogueado");
+        UsuarioBase usuario = (UsuarioBase) request.getSession().getAttribute("userLogueado");
 
-        if (usuario != null && "admin".equalsIgnoreCase(usuario.getTipo())) {
+        if (usuario != null && usuario.puedeGestionarPartidos()) {
             request.setAttribute("esAdmin", true);
             request.setAttribute("mensajeAdmin", "Modo Administrador");    
             ApuestaDAO apuestaDAO = new ApuestaDAO();
@@ -27,7 +27,7 @@ public class ApuestaMostrarServlet extends HttpServlet {
             request.getRequestDispatcher("WEB-INF/jsp/apuestasMostrar.jsp").forward(request, response);
         } else if (usuario != null && "user".equalsIgnoreCase(usuario.getTipo())) {
             ApuestaDAO apuestaDAO = new ApuestaDAO();
-            List<Apuesta> apuestas = apuestaDAO.getApuestasConResultadoPorUsuario(usuario.getIDusuario());
+            List<Apuesta> apuestas = apuestaDAO.getApuestasConResultadoPorUsuario(usuario.getId());
             request.setAttribute("apuestas", apuestas);
             request.getRequestDispatcher("WEB-INF/jsp/apuestasMostrar.jsp").forward(request, response);
         } else {

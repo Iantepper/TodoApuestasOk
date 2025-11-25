@@ -2,7 +2,7 @@ package com.mycompany.apuestatodook;
 
 import com.mycompany.apuestatodook.model.Persona;
 import com.mycompany.apuestatodook.model.PersonaDAO;
-import com.mycompany.apuestatodook.model.Usuario;
+import com.mycompany.apuestatodook.model.UsuarioBase;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -22,9 +22,9 @@ public class perfilServlet extends HttpServlet{
         
         String destino;
         
-        Usuario usuario = (Usuario) request.getSession().getAttribute("userLogueado");
+        UsuarioBase usuario = (UsuarioBase) request.getSession().getAttribute("userLogueado");
         
-        int IDusuario = usuario.getIDusuario();
+        int IDusuario = usuario.getId();
         
         PersonaDAO PersonaDAO = new PersonaDAO();
 

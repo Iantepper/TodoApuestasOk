@@ -6,6 +6,7 @@ import com.mycompany.apuestatodook.model.Partido;
 import com.mycompany.apuestatodook.model.PartidoDAO;
 import com.mycompany.apuestatodook.model.Resultado;
 import com.mycompany.apuestatodook.model.ResultadoDAO;
+import com.mycompany.apuestatodook.model.UsuarioBase;
 import com.mycompany.apuestatodook.model.Usuario;
 import com.mycompany.apuestatodook.model.UsuarioDAO;
 import jakarta.servlet.ServletException;
@@ -18,10 +19,18 @@ import java.io.IOException;
 @WebServlet(name = "SvprocesarApuesta", urlPatterns = {"/SvprocesarApuesta"})
 public class ProcesarApuestaServlet extends HttpServlet {
     @Override
-protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    Usuario usuario = (Usuario) request.getSession().getAttribute("userLogueado");
+protected void doPost(HttpServletRequest request, HttpServletResponse response) 
+        throws ServletException, IOException {
+    
+    UsuarioBase usuario = (UsuarioBase) request.getSession().getAttribute("userLogueado");
     if (usuario == null) {
         redirigirALogin(request, response);
+        return;
+    }
+
+    // Verificar que no sea Admin
+    if (usuario.puedeGestionarPartidos()) {
+        mostrarError(request, response, "Los administradores no pueden realizar apuestas");
         return;
     }
 
@@ -48,11 +57,17 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response) 
     }
 }
 
-private boolean validarMonto(Usuario usuario, int monto) {
-    return monto <= usuario.getDinero();
+private boolean validarMonto(UsuarioBase usuario, int monto) {
+    // Verificar que sea Usuario (no Admin) y tenga saldo
+    if (usuario instanceof Usuario) {
+        Usuario usuarioNormal = (Usuario) usuario;
+        return monto <= usuarioNormal.getDinero();
+    }
+    return false; // Admin no puede apostar
 }
 
-private Apuesta crearApuestaDesdeRequest(HttpServletRequest request, Usuario usuario) {
+
+private Apuesta crearApuestaDesdeRequest(HttpServletRequest request, UsuarioBase usuario) {
     int idPartido = Integer.parseInt(request.getParameter("idPartido"));
     String porQuien = request.getParameter("por");
     int monto = Integer.parseInt(request.getParameter("monto"));
@@ -60,12 +75,19 @@ private Apuesta crearApuestaDesdeRequest(HttpServletRequest request, Usuario usu
     ResultadoDAO resultadoDAO = new ResultadoDAO();
     int idResultado = resultadoDAO.getIdResultadoByIdPartido(idPartido);
     
-    return new Apuesta(monto, porQuien, usuario.getIDusuario(), idPartido, idResultado);
+    return new Apuesta(monto, porQuien, usuario.getId(), idPartido, idResultado);
 }
 
-private void procesarApuesta(Apuesta apuesta, Usuario usuario) {
+private void procesarApuesta(Apuesta apuesta, UsuarioBase usuario) {
     ApuestaDAO apuestaDAO = new ApuestaDAO();
     UsuarioDAO usuarioDAO = new UsuarioDAO();
+    
+    // Verificar que sea Usuario (no Admin)
+    if (!(usuario instanceof Usuario)) {
+        throw new IllegalArgumentException("Los administradores no pueden apostar");
+    }
+    
+    Usuario usuarioNormal = (Usuario) usuario;
     
     // Guardar apuesta
     apuestaDAO.add(apuesta);
@@ -75,19 +97,19 @@ private void procesarApuesta(Apuesta apuesta, Usuario usuario) {
     Resultado resultado = resultadoDAO.getResultadoByIdPartido(apuesta.getIdPartido());
     
     if (resultado != null && resultado.getGanador().equals(apuesta.getpor_quien())) {
-        usuario.setDinero(usuario.getDinero() + apuesta.getMonto());
+        usuarioNormal.setDinero(usuarioNormal.getDinero() + apuesta.getMonto());
         apuesta.setEstado('G');
     } else {
-        usuario.setDinero(usuario.getDinero() - apuesta.getMonto());
+        usuarioNormal.setDinero(usuarioNormal.getDinero() - apuesta.getMonto());
         apuesta.setEstado('P');
     }
     
     // Actualizar en BD
-    usuarioDAO.updateDinero(usuario);
+    usuarioDAO.updateDinero(usuarioNormal);
     apuestaDAO.updateEstado(apuesta);
 }
 
-private void configurarRespuesta(HttpServletRequest request, Apuesta apuesta, Usuario usuario) {
+private void configurarRespuesta(HttpServletRequest request, Apuesta apuesta, UsuarioBase usuario) {
     PartidoDAO partidoDAO = new PartidoDAO();
     Partido partido = partidoDAO.getPartidoPorId(apuesta.getIdPartido());
     

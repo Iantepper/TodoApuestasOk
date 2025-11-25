@@ -3,7 +3,7 @@ package com.mycompany.apuestatodook;
 
 import com.mycompany.apuestatodook.model.Partido;
 import com.mycompany.apuestatodook.model.PartidoDAO;
-import com.mycompany.apuestatodook.model.Usuario;
+import com.mycompany.apuestatodook.model.UsuarioBase;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -26,7 +26,7 @@ protected void doGet(HttpServletRequest request, HttpServletResponse response) t
     request.setAttribute("partidosConResultado", partidosConResultado);
 
     destino = "WEB-INF/jsp/resultados.jsp";
-    Usuario usuario = (Usuario) request.getSession().getAttribute("userLogueado");
+    UsuarioBase usuario = (UsuarioBase) request.getSession().getAttribute("userLogueado");
     
 
     request.getRequestDispatcher(destino).forward(request, response);
