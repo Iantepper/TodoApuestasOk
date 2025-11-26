@@ -1,7 +1,7 @@
 package com.mycompany.apuestatodook;
 
 import com.mycompany.apuestatodook.model.Apuesta;
-import com.mycompany.apuestatodook.model.ApuestaDAO;
+import com.mycompany.apuestatodook.model.ApuestaRepository;
 import com.mycompany.apuestatodook.model.UsuarioBase;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -13,27 +13,45 @@ import java.util.List;
 
 @WebServlet(name = "ApuestaMostrarServlet", urlPatterns = {"/ApuestasMostrar"})
 public class ApuestaMostrarServlet extends HttpServlet {
+    
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         UsuarioBase usuario = (UsuarioBase) request.getSession().getAttribute("userLogueado");
 
-        if (usuario != null && usuario.puedeGestionarPartidos()) {
-            request.setAttribute("esAdmin", true);
-            request.setAttribute("mensajeAdmin", "Modo Administrador");    
-            ApuestaDAO apuestaDAO = new ApuestaDAO();
-            List<Apuesta> apuestas = apuestaDAO.getAllApuestasConResultado();
-            request.setAttribute("apuestas", apuestas);
+        ApuestaRepository apuestaRepo = null;
+        try {
+            apuestaRepo = new ApuestaRepository();
+            
+            if (usuario != null && usuario.puedeGestionarPartidos()) {
+                request.setAttribute("esAdmin", true);
+                request.setAttribute("mensajeAdmin", "Modo Administrador");    
+                
+                // ✅ NUEVO: Usar Repository para obtener todas las apuestas
+                List<Apuesta> apuestas = apuestaRepo.obtenerTodasConDetalles();
+                request.setAttribute("apuestas", apuestas);
+                
+            } else if (usuario != null && "user".equalsIgnoreCase(usuario.getTipo())) {
+                // ✅ NUEVO: Usar Repository para obtener apuestas del usuario
+                List<Apuesta> apuestas = apuestaRepo.obtenerPorUsuarioConDetalles(usuario.getId());
+                request.setAttribute("apuestas", apuestas);
+                
+            } else {
+                request.setAttribute("hayError", true);
+                request.setAttribute("mensajeError", "Por favor, inicie sesión.");
+                request.getRequestDispatcher("WEB-INF/jsp/inicioSesion.jsp").forward(request, response);
+                return;
+            }
+            
             request.getRequestDispatcher("WEB-INF/jsp/apuestasMostrar.jsp").forward(request, response);
-        } else if (usuario != null && "user".equalsIgnoreCase(usuario.getTipo())) {
-            ApuestaDAO apuestaDAO = new ApuestaDAO();
-            List<Apuesta> apuestas = apuestaDAO.getApuestasConResultadoPorUsuario(usuario.getId());
-            request.setAttribute("apuestas", apuestas);
-            request.getRequestDispatcher("WEB-INF/jsp/apuestasMostrar.jsp").forward(request, response);
-        } else {
-            request.setAttribute("hayError", true);
-            request.setAttribute("mensajeError", "Por favor, inicie sesión.");
-            request.getRequestDispatcher("WEB-INF/jsp/inicioSesion.jsp").forward(request, response);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Fallback opcional al DAO si es necesario
+        } finally {
+            if (apuestaRepo != null) {
+                apuestaRepo.close();
+            }
         }
     }
 }
