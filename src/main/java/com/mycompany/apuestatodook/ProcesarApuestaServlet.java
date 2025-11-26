@@ -6,6 +6,7 @@ import com.mycompany.apuestatodook.model.Partido;
 import com.mycompany.apuestatodook.model.PartidoDAO;
 import com.mycompany.apuestatodook.model.Resultado;
 import com.mycompany.apuestatodook.model.ResultadoDAO;
+import com.mycompany.apuestatodook.model.ResultadoRepository;
 import com.mycompany.apuestatodook.model.UsuarioBase;
 import com.mycompany.apuestatodook.model.Usuario;
 import com.mycompany.apuestatodook.model.UsuarioService;
@@ -79,16 +80,26 @@ private Apuesta crearApuestaDesdeRequest(HttpServletRequest request, UsuarioBase
     String porQuien = request.getParameter("por");
     int monto = Integer.parseInt(request.getParameter("monto"));
     
-    ResultadoDAO resultadoDAO = new ResultadoDAO();
-    int idResultado = resultadoDAO.getIdResultadoByIdPartido(idPartido);
-    
-    System.out.println("🎯 CREANDO APUESTA CON NUEVO CONSTRUCTOR - " +
-                      "Usuario: " + usuario.getId() + 
-                      ", Partido: " + idPartido + 
-                      ", Resultado: " + idResultado);
-    
-    // ✅ USAR EL NUEVO CONSTRUCTOR:
-    return new Apuesta(monto, porQuien, 'A', usuario.getId(), idPartido, idResultado);
+    ResultadoRepository resultadoRepo = null;
+    try {
+        resultadoRepo = new ResultadoRepository();
+        int idResultado = resultadoRepo.obtenerIdResultadoPorPartido(idPartido);
+        
+        System.out.println("🎯 CREANDO APUESTA CON RESULTADO REPOSITORY - " +
+                          "Usuario: " + usuario.getId() + 
+                          ", Partido: " + idPartido + 
+                          ", Resultado: " + idResultado);
+        
+        return new Apuesta(monto, porQuien, 'A', usuario.getId(), idPartido, idResultado);
+        
+    } catch (Exception e) {
+        System.out.println("❌ ERROR al obtener resultado: " + e.getMessage());
+        throw new RuntimeException("No se puede apostar en este partido aún. El resultado no está disponible.");
+    } finally {
+        if (resultadoRepo != null) {
+            resultadoRepo.close();
+        }
+    }
 }
 
     private void procesarApuesta(Apuesta apuesta, UsuarioBase usuario, UsuarioService usuarioService) {

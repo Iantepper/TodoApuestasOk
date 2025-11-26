@@ -1,9 +1,7 @@
 package com.mycompany.apuestatodook;
 
-
 import com.mycompany.apuestatodook.model.Partido;
-import com.mycompany.apuestatodook.model.PartidoDAO;
-import com.mycompany.apuestatodook.model.UsuarioBase;
+import com.mycompany.apuestatodook.model.PartidoRepository;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -15,20 +13,27 @@ import java.util.List;
 @WebServlet(name = "SvResultados", urlPatterns = {"/Resultados"})
 public class ResultadosServlet extends HttpServlet {
     
-
-@Override
-protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    PartidoDAO partidoDAO = new PartidoDAO();
-    String destino;
-     
-    List<Partido> partidosConResultado = partidoDAO.getAllPartidosConResultado();
- 
-    request.setAttribute("partidosConResultado", partidosConResultado);
-
-    destino = "WEB-INF/jsp/resultados.jsp";
-    UsuarioBase usuario = (UsuarioBase) request.getSession().getAttribute("userLogueado");
-    
-
-    request.getRequestDispatcher(destino).forward(request, response);
-}
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+        
+        PartidoRepository partidoRepo = null;
+        try {
+            partidoRepo = new PartidoRepository();
+            
+            // partidos con resultado
+            List<Partido> partidosConResultado = partidoRepo.obtenerPartidosConResultado();
+            
+            request.setAttribute("partidosConResultado", partidosConResultado);
+            request.getRequestDispatcher("WEB-INF/jsp/resultados.jsp").forward(request, response);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            // fallback
+        } finally {
+            if (partidoRepo != null) {
+                partidoRepo.close();
+            }
+        }
+    }
 }

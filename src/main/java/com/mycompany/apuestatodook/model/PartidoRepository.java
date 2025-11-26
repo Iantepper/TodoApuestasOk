@@ -13,24 +13,59 @@ public class PartidoRepository {
     }
     
     // CREATE - Reemplaza add()
-    public void guardar(Partido partido) {
-        try {
-            em.getTransaction().begin();
+public void guardar(Partido partido) {
+    try {
+        em.getTransaction().begin();
+        
+        if (partido.getIdPartido() == 0) {
+            em.persist(partido); // INSERT
+            em.flush(); // Forzar el INSERT para obtener el ID
             
-            if (partido.getIdPartido() == 0) {
-                em.persist(partido); // INSERT
-            } else {
-                em.merge(partido); // UPDATE
-            }
-            
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            throw new RuntimeException("Error al guardar partido", e);
+            // ✅ CREAR RESULTADO AUTOMÁTICAMENTE después de persistir el partido
+            crearResultadoInicial(partido.getIdPartido());
+        } else {
+            em.merge(partido); // UPDATE
         }
+        
+        em.getTransaction().commit();
+        System.out.println("✅ Partido guardado ID: " + partido.getIdPartido() + " con resultado inicial");
+        
+    } catch (Exception e) {
+        if (em.getTransaction().isActive()) {
+            em.getTransaction().rollback();
+        }
+        throw new RuntimeException("Error al guardar partido", e);
     }
+}
+
+private void crearResultadoInicial(int idPartido) {
+    try {
+        // Verificar si ya existe resultado
+        TypedQuery<Long> query = em.createQuery(
+            "SELECT COUNT(r) FROM Resultado r WHERE r.partido.idPartido = :idPartido", 
+            Long.class
+        );
+        query.setParameter("idPartido", idPartido);
+        
+        Long count = query.getSingleResult();
+        
+        if (count == 0) {
+            // Crear resultado inicial
+            Resultado resultado = new Resultado();
+            resultado.setGanador("pendiente");
+            
+            // Asociar con el partido
+            Partido partido = em.find(Partido.class, idPartido);
+            resultado.setPartido(partido);
+            
+            em.persist(resultado);
+            System.out.println("✅ Resultado inicial creado para partido ID: " + idPartido);
+        }
+    } catch (Exception e) {
+        System.out.println("⚠️  No se pudo crear resultado inicial: " + e.getMessage());
+        // No lanzar excepción para no revertir la transacción del partido
+    }
+}
     
     // READ - Reemplaza getAll()
     public List<Partido> obtenerTodos() {
