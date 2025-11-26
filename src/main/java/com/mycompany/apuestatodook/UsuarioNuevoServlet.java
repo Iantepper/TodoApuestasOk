@@ -1,6 +1,6 @@
 package com.mycompany.apuestatodook;
 
-import com.mycompany.apuestatodook.model.UsuarioDAO;
+import com.mycompany.apuestatodook.model.UsuarioRepository;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -45,10 +45,31 @@ public class UsuarioNuevoServlet extends HttpServlet {
             request.getRequestDispatcher("/WEB-INF/jsp/crearUsuario.jsp").forward(request, response);
             return;
         } else {
-            UsuarioDAO usuarioDAO = new UsuarioDAO();
- 
-            int idUsuario = usuarioDAO.addConDatosPersonales(usuario, password, nombre, apellido, edad, dni);
-            request.getRequestDispatcher("/WEB-INF/jsp/usuarioCreado.jsp").forward(request, response);
+            UsuarioRepository usuarioRepo = null;
+            try {
+                usuarioRepo = new UsuarioRepository();
+                
+                // Verificar si usuario ya existe
+                if (usuarioRepo.existeUsuario(usuario)) {
+                    request.setAttribute("hayError", true);
+                    request.setAttribute("mensajeError", "El nombre de usuario ya existe.");
+                    request.getRequestDispatcher("/WEB-INF/jsp/crearUsuario.jsp").forward(request, response);
+                    return;
+                }
+                
+                int idUsuario = usuarioRepo.crearUsuario(usuario, password, nombre, apellido, edad, dni);
+                request.getRequestDispatcher("/WEB-INF/jsp/usuarioCreado.jsp").forward(request, response);
+                
+            } catch (Exception e) {
+                e.printStackTrace();
+                request.setAttribute("hayError", true);
+                request.setAttribute("mensajeError", "Error al crear usuario. Intente más tarde.");
+                request.getRequestDispatcher("/WEB-INF/jsp/crearUsuario.jsp").forward(request, response);
+            } finally {
+                if (usuarioRepo != null) {
+                    usuarioRepo.close();
+                }
+            }
         }
     }
 }

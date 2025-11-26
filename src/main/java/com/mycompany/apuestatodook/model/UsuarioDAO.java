@@ -44,20 +44,35 @@ public class UsuarioDAO {
         return validado;
     }
 
-    private UsuarioBase rsRowToUsuario(ResultSet rs) throws SQLException {
-        int IDusuario = rs.getInt("id_usuario");
-        String usuario = rs.getString("usuario");
-        String contrasenia = rs.getString("contrasenia");
-        String tipo = rs.getString("tipo");
-        double dinero = rs.getDouble("dinero");
+private UsuarioBase rsRowToUsuario(ResultSet rs) throws SQLException {
+    int IDusuario = rs.getInt("id_usuario");
+    String usuario = rs.getString("usuario");
+    String contrasenia = rs.getString("contrasenia");
+    String tipo = rs.getString("tipo");
+    double dinero = rs.getDouble("dinero");
 
-        if ("admin".equalsIgnoreCase(tipo)) {
-            return new Admin(IDusuario, usuario, contrasenia, "Administrador del Sistema");
-        } else {
- 
+    if ("admin".equalsIgnoreCase(tipo)) {
+        return new Admin(IDusuario, usuario, contrasenia);
+    } else {
+        // Cargar datos personales si existen
+        try {
+            String nombre = rs.getString("nombre");
+            String apellido = rs.getString("apellido");
+            String dni = rs.getString("dni");
+            int edad = rs.getInt("edad");
+            
+  
+            if (nombre != null) {
+                return new Usuario(IDusuario, usuario, contrasenia, dinero, dni, nombre, apellido, edad);
+            } else {
+
+                return new Usuario(IDusuario, usuario, contrasenia, dinero, "", "", "", 0);
+            }
+        } catch (SQLException e) {
             return new Usuario(IDusuario, usuario, contrasenia, dinero, "", "", "", 0);
         }
     }
+}
 
  
     public int addConDatosPersonales(String usuario, String contrasenia, String nombre, String apellido, int edad, String dni) {

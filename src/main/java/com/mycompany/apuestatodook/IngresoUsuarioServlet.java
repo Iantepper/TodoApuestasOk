@@ -1,7 +1,7 @@
 package com.mycompany.apuestatodook;
 
 import com.mycompany.apuestatodook.model.UsuarioBase;
-import com.mycompany.apuestatodook.model.UsuarioDAO;
+import com.mycompany.apuestatodook.model.UsuarioRepository;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -13,40 +13,51 @@ import java.io.IOException;
 @WebServlet(name = "SvIngresosoUsuario", urlPatterns = {"/IngresoUsuario"})
 public class IngresoUsuarioServlet extends HttpServlet {
     
-    
-     @Override
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String origen = request.getParameter("origen");
         request.setAttribute("deDondeViene", origen);
         request.getRequestDispatcher("/WEB-INF/jsp/inicioSesion.jsp").forward(request, response);
     }
+    
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String n = request.getParameter("usuario");
-        String p = request.getParameter("Contraseña");
-        UsuarioBase user = new UsuarioDAO().autenticar(n, p);
-        if (user != null) {
-      
-            String haciaDondeIba = request.getParameter("deDondeViene");
-            HttpSession session = request.getSession();
-            session.setMaxInactiveInterval(3600);
-            session.setAttribute("userLogueado", user);
-            session.setAttribute("tipoUsuario", user.getTipo());
-           if (haciaDondeIba != null) {
-                response.sendRedirect(request.getContextPath() + haciaDondeIba);
+        String usuario = request.getParameter("usuario");
+        String contrasenia = request.getParameter("Contraseña");
+        
+        UsuarioRepository usuarioRepo = null;
+        try {
+            usuarioRepo = new UsuarioRepository();
+            UsuarioBase user = usuarioRepo.autenticar(usuario, contrasenia);
+            
+            if (user != null) {
+                String haciaDondeIba = request.getParameter("deDondeViene");
+                HttpSession session = request.getSession();
+                session.setMaxInactiveInterval(3600);
+                session.setAttribute("userLogueado", user);
+                session.setAttribute("tipoUsuario", user.getTipo());
+                
+                if (haciaDondeIba != null) {
+                    response.sendRedirect(request.getContextPath() + haciaDondeIba);
+                } else {
+                    response.sendRedirect(request.getContextPath() + "/principaliniciado.jsp");            
+                }
             } else {
-                response.sendRedirect(request.getContextPath() + "/principaliniciado.jsp");            
+                request.setAttribute("hayError", true);
+                request.setAttribute("mensajeError", "Credenciales incorrectas!");
+                doGet(request, response);
             }
-            }else {
+        } catch (Exception e) {
+            e.printStackTrace();
             request.setAttribute("hayError", true);
-            request.setAttribute("mensajeError", "Credenciales incorrectas!");
+            request.setAttribute("mensajeError", "Error en el sistema. Intente más tarde.");
             doGet(request, response);
-
+        } finally {
+            if (usuarioRepo != null) {
+                usuarioRepo.close();
+            }
         }
     }
-    
-    
-
 }
