@@ -52,22 +52,29 @@ public class ResultadoDAO {
         return resultado;
     }
     
-     public int getIdResultadoByIdPartido(int idPartido) {
-        String query = "SELECT id_resultado FROM resultado WHERE fk_id_partido = ?";
-        try (Connection con = ConnectionPool.getInstance().getConnection();
-             PreparedStatement preparedStatement = con.prepareStatement(query)) {
-            preparedStatement.setInt(1, idPartido);
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                if (resultSet.next()) {
-                    return resultSet.getInt("id_resultado");
-                } else {
-                    throw new RuntimeException("No se encontró ningún resultado para el partido con id " + idPartido);
-                }
+public int getIdResultadoByIdPartido(int idPartido) {
+    System.out.println("🔍 BUSCANDO resultado ID para partido: " + idPartido);
+    
+    String query = "SELECT id_resultado FROM resultado WHERE fk_id_partido = ?";
+    try (Connection con = ConnectionPool.getInstance().getConnection();
+         PreparedStatement preparedStatement = con.prepareStatement(query)) {
+        
+        preparedStatement.setInt(1, idPartido);
+        try (ResultSet resultSet = preparedStatement.executeQuery()) {
+            if (resultSet.next()) {
+                int id = resultSet.getInt("id_resultado");
+                System.out.println("✅ Resultado ID encontrado: " + id);
+                return id;
+            } else {
+                System.out.println("❌ NO existe resultado para partido " + idPartido);
+                throw new RuntimeException("No se encontró resultado");
             }
-        } catch (SQLException ex) {
-            throw new RuntimeException(ex);
         }
+    } catch (SQLException ex) {
+        System.out.println("💥 ERROR: " + ex.getMessage());
+        throw new RuntimeException(ex);
     }
+}
 
     private Resultado rsRowToResultado(ResultSet rs) throws SQLException {
         int idResultado = rs.getInt("id_resultado");

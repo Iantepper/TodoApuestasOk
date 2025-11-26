@@ -11,26 +11,32 @@ import java.util.List;
 public class ApuestaDAO {
 
     public void add(Apuesta apuesta) {
-        String query = "INSERT INTO apuesta (monto, por_quien, fk_id_usuario, fk_id_partido, fk_id_resultado) VALUES (?, ?, ?, ?, ?)";
-        try (Connection con = ConnectionPool.getInstance().getConnection(); 
-             PreparedStatement preparedStatement = con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
-            
-            preparedStatement.setInt(1, apuesta.getMonto());
-            preparedStatement.setString(2, apuesta.getpor_quien());
-            preparedStatement.setInt(3, apuesta.getIdUsuario());
-            preparedStatement.setInt(4, apuesta.getIdPartido());
-            preparedStatement.setInt(5, apuesta.getFk_id_resultado());
-            preparedStatement.executeUpdate();
+    System.out.println("🔍 DEBUG APUESTA - Monto: " + apuesta.getMonto() + 
+                      ", Por: " + apuesta.getpor_quien() + 
+                      ", ID Usuario: " + apuesta.getIdUsuario() +
+                      ", ID Partido: " + apuesta.getIdPartido() +
+                      ", ID Resultado: " + apuesta.getFk_id_resultado());
+    
+    String query = "INSERT INTO apuesta (monto, por_quien, fk_id_usuario, fk_id_partido, fk_id_resultado) VALUES (?, ?, ?, ?, ?)";
+    try (Connection con = ConnectionPool.getInstance().getConnection(); 
+         PreparedStatement preparedStatement = con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+        
+        preparedStatement.setInt(1, apuesta.getMonto());
+        preparedStatement.setString(2, apuesta.getpor_quien());
+        preparedStatement.setInt(3, apuesta.getIdUsuario());
+        preparedStatement.setInt(4, apuesta.getIdPartido());
+        preparedStatement.setInt(5, apuesta.getFk_id_resultado());
+        
+        System.out.println("🚀 Ejecutando INSERT apuesta...");
+        preparedStatement.executeUpdate();
+        System.out.println("✅ Apuesta insertada OK");
 
-            try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    apuesta.setIdApuesta(generatedKeys.getInt(1));
-                }
-            }
-        } catch (SQLException ex) {
-            throw new RuntimeException("Error al insertar apuesta", ex);
-        }
+    } catch (SQLException ex) {
+        System.out.println("💥 ERROR SQL: " + ex.getMessage());
+        System.out.println("💥 ERROR StackTrace: " + ex.getStackTrace());
+        throw new RuntimeException("Error al insertar apuesta", ex);
     }
+}
 
     public void updateEstado(Apuesta apuesta) {
         String query = "UPDATE apuesta SET estado = ? WHERE id_apuesta = ?";

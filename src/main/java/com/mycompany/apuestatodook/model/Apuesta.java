@@ -19,16 +19,27 @@ public class Apuesta {
     @Column(name = "estado")
     private char estado;
     
+    // CAMPOS REALES para los IDs (para INSERT directo)
+    @Column(name = "fk_id_usuario", insertable = true, updatable = true)
+    private int fkIdUsuario;
+    
+    @Column(name = "fk_id_partido", insertable = true, updatable = true)
+    private int fkIdPartido;
+    
+    @Column(name = "fk_id_resultado", insertable = true, updatable = true)
+    private int fkIdResultado;
+    
+    // Relaciones JPA (para queries)
     @ManyToOne
-    @JoinColumn(name = "fk_id_usuario")
+    @JoinColumn(name = "fk_id_usuario", insertable = false, updatable = false)
     private Usuario usuario;
     
     @ManyToOne
-    @JoinColumn(name = "fk_id_partido")
+    @JoinColumn(name = "fk_id_partido", insertable = false, updatable = false)
     private Partido partido;
     
     @ManyToOne
-    @JoinColumn(name = "fk_id_resultado")
+    @JoinColumn(name = "fk_id_resultado", insertable = false, updatable = false)
     private Resultado resultado;
 
     // Campos transient (no se persisten)
@@ -44,7 +55,6 @@ public class Apuesta {
     @Transient
     private String nombreUsuario;
 
-
     public Apuesta() {}
 
     // Constructores
@@ -56,38 +66,67 @@ public class Apuesta {
         this.por_quien = por_quien;
     }
     
-    public Apuesta(int monto, String por_quien, int idUsuario, int idPartido, int fk_id_resultado) {
+    // Constructor para INSERT directo
+    public Apuesta(int monto, String por_quien, char estado, int fkIdUsuario, int fkIdPartido, int fkIdResultado) {
         this.monto = monto;
         this.por_quien = por_quien;
-        // Estos parámetros ya no se usan directamente - se setean los objetos
+        this.estado = estado;
+        this.fkIdUsuario = fkIdUsuario;
+        this.fkIdPartido = fkIdPartido;
+        this.fkIdResultado = fkIdResultado;
     }
 
-    // Getters y setters CORREGIDOS
+    // GETTERS Y SETTERS REALES para los IDs
+    public int getFkIdUsuario() {
+        return fkIdUsuario;
+    }
+
+    public void setFkIdUsuario(int fkIdUsuario) {
+        this.fkIdUsuario = fkIdUsuario;
+    }
+
+    public int getFkIdPartido() {
+        return fkIdPartido;
+    }
+
+    public void setFkIdPartido(int fkIdPartido) {
+        this.fkIdPartido = fkIdPartido;
+    }
+
+    public int getFkIdResultado() {
+        return fkIdResultado;
+    }
+
+    public void setFkIdResultado(int fkIdResultado) {
+        this.fkIdResultado = fkIdResultado;
+    }
+
+    // MÉTODOS DE COMPATIBILIDAD (que usan los campos reales)
     public int getFk_id_resultado() {
-        return (resultado != null) ? resultado.getIdResultado() : 0;
+        return this.fkIdResultado;
     }
 
     public void setFk_id_resultado(int fk_id_resultado) {
-        // Este método ya no es necesario con JPA
+        this.fkIdResultado = fk_id_resultado;
     }
     
     public int getIdUsuario() {
-        return (usuario != null) ? usuario.getId() : 0;
+        return this.fkIdUsuario;
     }
 
     public void setIdUsuario(int idUsuario) {
-        // Este método ya no es necesario con JPA
+        this.fkIdUsuario = idUsuario;
     }
 
     public int getIdPartido() {
-        return (partido != null) ? partido.getIdPartido() : 0;
+        return this.fkIdPartido;
     }
 
     public void setIdPartido(int idPartido) {
-        // Este método ya no es necesario con JPA
+        this.fkIdPartido = idPartido;
     }
 
- 
+    // Resto de getters y setters...
     public char getEstado() {
         return estado;
     }
