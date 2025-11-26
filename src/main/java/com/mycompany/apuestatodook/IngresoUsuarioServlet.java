@@ -50,7 +50,6 @@ public class IngresoUsuarioServlet extends HttpServlet {
                 doGet(request, response);
             }
         } catch (Exception e) {
-            e.printStackTrace();
             request.setAttribute("hayError", true);
             request.setAttribute("mensajeError", "Error en el sistema. Intente más tarde.");
             doGet(request, response);

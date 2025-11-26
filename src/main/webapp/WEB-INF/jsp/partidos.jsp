@@ -9,7 +9,7 @@
 
 <c:choose>
     <c:when test="${esAdmin}">
-        <!-- VISTA ADMIN - TABLA CON TODOS LOS PARTIDOS -->
+
         <div class="container mt-4">
             <h2>Gestión de Partidos - Admin</h2>
             
@@ -80,7 +80,7 @@
         </div>
     </c:when>
     <c:otherwise>
-        <!-- VISTA USUARIO NORMAL - SOLO PARTIDOS FUTUROS EN BURBUJAS -->
+
         <h1 id="bets">PARTIDOS DISPONIBLES</h1>
         <div class="row">
             <div class="col-md-12">

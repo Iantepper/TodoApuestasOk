@@ -27,12 +27,12 @@ public class ApuestaMostrarServlet extends HttpServlet {
                 request.setAttribute("esAdmin", true);
                 request.setAttribute("mensajeAdmin", "Modo Administrador");    
                 
-                // ✅ NUEVO: Usar Repository para obtener todas las apuestas
+                //  todas las apuestas
                 List<Apuesta> apuestas = apuestaRepo.obtenerTodasConDetalles();
                 request.setAttribute("apuestas", apuestas);
                 
             } else if (usuario != null && "user".equalsIgnoreCase(usuario.getTipo())) {
-                // ✅ NUEVO: Usar Repository para obtener apuestas del usuario
+                // apuestas del usuario
                 List<Apuesta> apuestas = apuestaRepo.obtenerPorUsuarioConDetalles(usuario.getId());
                 request.setAttribute("apuestas", apuestas);
                 
@@ -46,8 +46,8 @@ public class ApuestaMostrarServlet extends HttpServlet {
             request.getRequestDispatcher("WEB-INF/jsp/apuestasMostrar.jsp").forward(request, response);
             
         } catch (Exception e) {
-            e.printStackTrace();
-            // Fallback opcional al DAO si es necesario
+            System.err.println("❌ Error en Mostrar Apuesta: " + e.getMessage());
+           
         } finally {
             if (apuestaRepo != null) {
                 apuestaRepo.close();

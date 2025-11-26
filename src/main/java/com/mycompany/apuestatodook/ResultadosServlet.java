@@ -28,8 +28,7 @@ public class ResultadosServlet extends HttpServlet {
             request.getRequestDispatcher("WEB-INF/jsp/resultados.jsp").forward(request, response);
             
         } catch (Exception e) {
-            e.printStackTrace();
-            // fallback
+System.err.println("❌ Error en en mostrar resultados: " + e.getMessage());
         } finally {
             if (partidoRepo != null) {
                 partidoRepo.close();

@@ -19,7 +19,7 @@ public class Apuesta {
     @Column(name = "estado")
     private char estado;
     
-    // CAMPOS REALES para los IDs (para INSERT directo)
+
     @Column(name = "fk_id_usuario", insertable = true, updatable = true)
     private int fkIdUsuario;
     
@@ -29,7 +29,7 @@ public class Apuesta {
     @Column(name = "fk_id_resultado", insertable = true, updatable = true)
     private int fkIdResultado;
     
-    // Relaciones JPA (para queries)
+
     @ManyToOne
     @JoinColumn(name = "fk_id_usuario", insertable = false, updatable = false)
     private Usuario usuario;
@@ -42,7 +42,7 @@ public class Apuesta {
     @JoinColumn(name = "fk_id_resultado", insertable = false, updatable = false)
     private Resultado resultado;
 
-    // Campos transient (no se persisten)
+    // no se persisten)
     @Transient
     private String local;
     
@@ -57,7 +57,7 @@ public class Apuesta {
 
     public Apuesta() {}
 
-    // Constructores
+
     public Apuesta(String local, String visitante, String fecha, int monto, String por_quien) {
         this.local = local;
         this.visitante = visitante;
@@ -66,7 +66,7 @@ public class Apuesta {
         this.por_quien = por_quien;
     }
     
-    // Constructor para INSERT directo
+
     public Apuesta(int monto, String por_quien, char estado, int fkIdUsuario, int fkIdPartido, int fkIdResultado) {
         this.monto = monto;
         this.por_quien = por_quien;
@@ -76,7 +76,7 @@ public class Apuesta {
         this.fkIdResultado = fkIdResultado;
     }
 
-    // GETTERS Y SETTERS REALES para los IDs
+
     public int getFkIdUsuario() {
         return fkIdUsuario;
     }
@@ -101,7 +101,7 @@ public class Apuesta {
         this.fkIdResultado = fkIdResultado;
     }
 
-    // MÉTODOS DE COMPATIBILIDAD (que usan los campos reales)
+
     public int getFk_id_resultado() {
         return this.fkIdResultado;
     }
@@ -126,7 +126,7 @@ public class Apuesta {
         this.fkIdPartido = idPartido;
     }
 
-    // Resto de getters y setters...
+
     public char getEstado() {
         return estado;
     }
@@ -188,7 +188,7 @@ public class Apuesta {
         }
     }
 
-    // Getters para las relaciones JPA
+    // relaciones JPA
     public Usuario getUsuario() {
         return usuario;
     }
@@ -213,7 +213,6 @@ public class Apuesta {
         this.resultado = resultado;
     }
 
-    // Getters para campos transient
     public String getLocal() {
         return local;
     }

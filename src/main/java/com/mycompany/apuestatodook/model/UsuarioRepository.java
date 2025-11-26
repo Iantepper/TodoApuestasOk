@@ -3,7 +3,6 @@ package com.mycompany.apuestatodook.model;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
-import java.util.List;
 
 public class UsuarioRepository {
     
@@ -13,7 +12,7 @@ public class UsuarioRepository {
         this.em = EntityManagerUtil.getEntityManagerFactory().createEntityManager();
     }
     
-    // Reemplaza: autenticar(String usuario, String contrasenia)
+    // aunt
     public UsuarioBase autenticar(String usuario, String contrasenia) {
         try {
             TypedQuery<UsuarioBase> query = em.createQuery(
@@ -31,7 +30,7 @@ public class UsuarioRepository {
         }
     }
     
-    // Reemplaza: addConDatosPersonales()
+
     public int crearUsuario(String usuario, String contrasenia, String nombre, String apellido, int edad, String dni) {
         try {
             em.getTransaction().begin();
@@ -80,7 +79,7 @@ public class UsuarioRepository {
         }
     }
     
-    // Método auxiliar
+
     public boolean existeUsuario(String usuario) {
         TypedQuery<Long> query = em.createQuery(
             "SELECT COUNT(u) FROM UsuarioBase u WHERE u.usuario = :usuario", 
@@ -89,6 +88,24 @@ public class UsuarioRepository {
         query.setParameter("usuario", usuario);
         return query.getSingleResult() > 0;
     }
+    
+    public void actualizarDinero(int idUsuario, double nuevoDinero) {
+    try {
+        em.getTransaction().begin();
+        
+        Usuario usuario = em.find(Usuario.class, idUsuario);
+        if (usuario != null) {
+            usuario.setDinero(nuevoDinero);
+        }
+        
+        em.getTransaction().commit();
+    } catch (Exception e) {
+        if (em.getTransaction().isActive()) {
+            em.getTransaction().rollback();
+        }
+        throw new RuntimeException("Error al actualizar dinero", e);
+    }
+}
     
     public void close() {
         if (em != null && em.isOpen()) {

@@ -22,10 +22,10 @@ public class Partido {
     @OneToOne(mappedBy = "partido", cascade = CascadeType.ALL)
     private Resultado resultado;
 
-    // Constructor vacío (OBLIGATORIO para JPA)
+
     public Partido() {}
 
-    // Constructor con parámetros
+
     public Partido(String local, String visitante, String fecha, int idPartido) {
         this.local = local;
         this.visitante = visitante;
@@ -40,7 +40,7 @@ public class Partido {
     this.resultado = resultado;
     }
 
-    // Getters y setters
+
     public String getLocal() {
         return local;
     }

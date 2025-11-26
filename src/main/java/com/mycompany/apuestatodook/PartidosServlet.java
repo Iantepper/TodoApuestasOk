@@ -1,7 +1,6 @@
 package com.mycompany.apuestatodook;
 
 import com.mycompany.apuestatodook.model.Partido;
-import com.mycompany.apuestatodook.model.PartidoDAO;
 import com.mycompany.apuestatodook.model.PartidoRepository;
 import com.mycompany.apuestatodook.model.Resultado;
 import com.mycompany.apuestatodook.model.UsuarioBase;
@@ -17,65 +16,57 @@ import java.time.LocalDateTime;
 @WebServlet(name = "SvPartidos", urlPatterns = {"/Partidos"})
 public class PartidosServlet extends HttpServlet {
 
-    // Temporal: mantener PartidoDAO por ahora
-    private final PartidoDAO partidoDAO = new PartidoDAO();
-
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+protected void doGet(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+    
+    UsuarioBase usuario = (UsuarioBase) request.getSession().getAttribute("userLogueado");
+    boolean esAdmin = usuario != null && usuario.puedeGestionarPartidos();
+    boolean modoAdmin = "true".equals(request.getParameter("admin"));
+    
+    List<Partido> partidos;
+    PartidoRepository partidoRepo = null;
+    
+    try {
+        partidoRepo = new PartidoRepository();
         
-        UsuarioBase usuario = (UsuarioBase) request.getSession().getAttribute("userLogueado");
-        boolean esAdmin = usuario != null && usuario.puedeGestionarPartidos();
-        boolean modoAdmin = "true".equals(request.getParameter("admin"));
-        
-        if (esAdmin && request.getParameter("eliminar") != null) {
-            int idPartido = Integer.parseInt(request.getParameter("eliminar"));
-            partidoDAO.delete(idPartido); // Temporal: seguir usando DAO
+        if (esAdmin && modoAdmin) {
+            // odos los partidos
+            System.out.println("👑 Admin en MODO ADMIN - viendo TODOS los partidos");
+            partidos = partidoRepo.obtenerTodos();
+            request.setAttribute("esAdmin", true);
+            
+            
+            for (Partido partido : partidos) {
+                Resultado resultado = partidoRepo.obtenerResultadoPorPartido(partido.getIdPartido());
+                partido.setResultado(resultado);
+            }
+            
+        } else {
+            //normal futuros
+            System.out.println((esAdmin ? "👑 Admin" : "👤 User") + " en MODO NORMAL - viendo PARTIDOS FUTUROS");
+            partidos = partidoRepo.obtenerPartidosFuturos();
+            request.setAttribute("esAdmin", false);
         }
         
-        List<Partido> partidos;
-        PartidoRepository partidoRepo = null;
+        System.out.println("🎲 Partidos a mostrar: " + partidos.size());
+        for (Partido p : partidos) {
+            System.out.println("   - " + p.getLocal() + " vs " + p.getVisitante() + " (" + p.getFecha() + ")");
+        }
         
-        try {
-            partidoRepo = new PartidoRepository();
-            
-            if (esAdmin && modoAdmin) {
-                // ✅ NUEVO: Usar Repository para obtener todos los partidos
-                partidos = partidoRepo.obtenerTodos();
-                request.setAttribute("esAdmin", true);
-            } else {
-                // ✅ NUEVO: Usar Repository para partidos futuros
-                partidos = partidoRepo.obtenerPartidosFuturos();
-                request.setAttribute("esAdmin", false);
-            }
-            
-            // Para admin, cargar resultados (temporal: seguir usando DAO)
-            if (esAdmin && modoAdmin) {
-                for (Partido partido : partidos) {
-                    Resultado resultado = partidoDAO.getResultadoPorPartido(partido.getIdPartido());
-                    partido.setResultado(resultado);
-                }
-            }
-            
-            request.setAttribute("listaDePartidos", partidos);
-            request.getRequestDispatcher("WEB-INF/jsp/partidos.jsp").forward(request, response);
-            
-        } catch (Exception e) {
-            e.printStackTrace();
-            // Fallback al DAO si hay error
-            if (esAdmin && modoAdmin) {
-                partidos = partidoDAO.getAll();
-            } else {
-                partidos = partidoDAO.getPartidosFuturos();
-            }
-            request.setAttribute("listaDePartidos", partidos);
-            request.getRequestDispatcher("WEB-INF/jsp/partidos.jsp").forward(request, response);
-        } finally {
-            if (partidoRepo != null) {
-                partidoRepo.close();
-            }
+        request.setAttribute("listaDePartidos", partidos);
+        request.getRequestDispatcher("WEB-INF/jsp/partidos.jsp").forward(request, response);
+        
+    } catch (Exception e) {
+        request.setAttribute("hayError", true);
+        request.setAttribute("mensajeError", "Error al cargar los partidos");
+        request.getRequestDispatcher("WEB-INF/jsp/partidos.jsp").forward(request, response);
+    } finally {
+        if (partidoRepo != null) {
+            partidoRepo.close();
         }
     }
+}
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -95,8 +86,13 @@ public class PartidosServlet extends HttpServlet {
                 int idPartido = Integer.parseInt(request.getParameter("idPartido"));
                 String ganador = request.getParameter("ganador");
                 
-                // ✅ NUEVO: Usar Repository para actualizar resultado
-                partidoRepo.actualizarResultado(idPartido, ganador);
+                //actualizar resultado
+                partidoRepo.actualizarResultadoYProcesarApuestas(idPartido, ganador);
+                
+            } else if (request.getParameter("eliminar") != null) {
+                // liminar partido
+                int idPartido = Integer.parseInt(request.getParameter("eliminar"));
+                partidoRepo.eliminar(idPartido);
                 
             } else {
                 String local = request.getParameter("local");
@@ -110,15 +106,14 @@ public class PartidosServlet extends HttpServlet {
                     if (esFechaFutura(fecha)) {
                         Partido partido = new Partido(local, visitante, fecha, 0);
                         
-                        // ✅ NUEVO: Usar Repository para guardar partido
+
                         partidoRepo.guardar(partido);
                     }
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
-            // Fallback al DAO si hay error
-            // ... (mantener lógica DAO como fallback)
+
         } finally {
             if (partidoRepo != null) {
                 partidoRepo.close();

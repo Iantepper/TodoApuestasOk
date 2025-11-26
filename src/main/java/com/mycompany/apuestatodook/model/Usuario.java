@@ -20,7 +20,7 @@ public class Usuario extends UsuarioBase {
     @Column(name = "edad")
     private int edad;
 
-    // Constructor vacío
+
     public Usuario() {}
 
 public Usuario(int id, String usuario, String contrasenia, double dinero, 
@@ -48,7 +48,7 @@ public Usuario(int id, String usuario, String contrasenia, double dinero,
         return false;
     }
 
-    // Getters específicos
+
     public double getDinero() { return dinero; }
     public void setDinero(double dinero) { this.dinero = dinero; }
     public String getDni() { return dni; }

@@ -1,11 +1,10 @@
 package com.mycompany.apuestatodook;
 
 import com.mycompany.apuestatodook.model.Apuesta;
-import com.mycompany.apuestatodook.model.ApuestaDAO;
+import com.mycompany.apuestatodook.model.ApuestaRepository;
 import com.mycompany.apuestatodook.model.Partido;
-import com.mycompany.apuestatodook.model.PartidoDAO;
+import com.mycompany.apuestatodook.model.PartidoRepository;
 import com.mycompany.apuestatodook.model.Resultado;
-import com.mycompany.apuestatodook.model.ResultadoDAO;
 import com.mycompany.apuestatodook.model.ResultadoRepository;
 import com.mycompany.apuestatodook.model.UsuarioBase;
 import com.mycompany.apuestatodook.model.Usuario;
@@ -30,28 +29,32 @@ public class ProcesarApuestaServlet extends HttpServlet {
             return;
         }
 
-        // Verificar que no sea Admin
+        // auth
         if (usuario.puedeGestionarPartidos()) {
             mostrarError(request, response, "Los administradores no pueden realizar apuestas");
             return;
         }
 
         UsuarioService usuarioService = null;
+        ApuestaRepository apuestaRepo = null;
         try {
             usuarioService = new UsuarioService();
+            apuestaRepo = new ApuestaRepository();
             
-            // Validar monto
+            // auth
             int monto = Integer.parseInt(request.getParameter("monto"));
             if (!validarMonto(usuario, monto)) {
                 mostrarError(request, response, "Saldo insuficiente para la apuesta.");
                 return;
             }
 
-            // Crear apuesta
-            Apuesta apuesta = crearApuestaDesdeRequest(request, usuario);
-            procesarApuesta(apuesta, usuario, usuarioService);
 
-            // Configurar respuesta
+            Apuesta apuesta = crearApuestaDesdeRequest(request, usuario);
+            
+            //guardar apuesta
+            procesarApuesta(apuesta, usuario, usuarioService, apuestaRepo);
+
+ 
             configurarRespuesta(request, apuesta, usuario);
             request.getRequestDispatcher("WEB-INF/jsp/ApuestaCreada.jsp").forward(request, response);
 
@@ -63,90 +66,111 @@ public class ProcesarApuestaServlet extends HttpServlet {
             if (usuarioService != null) {
                 usuarioService.close();
             }
+            if (apuestaRepo != null) {
+                apuestaRepo.close();
+            }
         }
     }
 
     private boolean validarMonto(UsuarioBase usuario, int monto) {
-        // Verificar que sea Usuario (no Admin) y tenga saldo
         if (usuario instanceof Usuario) {
             Usuario usuarioNormal = (Usuario) usuario;
             return monto <= usuarioNormal.getDinero();
         }
-        return false; // Admin no puede apostar
+        return false;
     }
 
-private Apuesta crearApuestaDesdeRequest(HttpServletRequest request, UsuarioBase usuario) {
-    int idPartido = Integer.parseInt(request.getParameter("idPartido"));
-    String porQuien = request.getParameter("por");
-    int monto = Integer.parseInt(request.getParameter("monto"));
-    
-    ResultadoRepository resultadoRepo = null;
-    try {
-        resultadoRepo = new ResultadoRepository();
-        int idResultado = resultadoRepo.obtenerIdResultadoPorPartido(idPartido);
+    private Apuesta crearApuestaDesdeRequest(HttpServletRequest request, UsuarioBase usuario) {
+        int idPartido = Integer.parseInt(request.getParameter("idPartido"));
+        String porQuien = request.getParameter("por");
+        int monto = Integer.parseInt(request.getParameter("monto"));
         
-        System.out.println("🎯 CREANDO APUESTA CON RESULTADO REPOSITORY - " +
-                          "Usuario: " + usuario.getId() + 
-                          ", Partido: " + idPartido + 
-                          ", Resultado: " + idResultado);
-        
-        return new Apuesta(monto, porQuien, 'A', usuario.getId(), idPartido, idResultado);
-        
-    } catch (Exception e) {
-        System.out.println("❌ ERROR al obtener resultado: " + e.getMessage());
-        throw new RuntimeException("No se puede apostar en este partido aún. El resultado no está disponible.");
-    } finally {
-        if (resultadoRepo != null) {
-            resultadoRepo.close();
+        ResultadoRepository resultadoRepo = null;
+        try {
+            resultadoRepo = new ResultadoRepository();
+            int idResultado = resultadoRepo.obtenerIdResultadoPorPartido(idPartido);
+            
+            System.out.println("🎯 CREANDO APUESTA CON RESULTADO REPOSITORY - " +
+                              "Usuario: " + usuario.getId() + 
+                              ", Partido: " + idPartido + 
+                              ", Resultado: " + idResultado);
+            
+            return new Apuesta(monto, porQuien, 'A', usuario.getId(), idPartido, idResultado);
+            
+        } catch (Exception e) {
+            System.out.println("❌ ERROR al obtener resultado: " + e.getMessage());
+            throw new RuntimeException("No se puede apostar en este partido aún. El resultado no está disponible.");
+        } finally {
+            if (resultadoRepo != null) {
+                resultadoRepo.close();
+            }
         }
     }
-}
 
-    private void procesarApuesta(Apuesta apuesta, UsuarioBase usuario, UsuarioService usuarioService) {
-    ApuestaDAO apuestaDAO = new ApuestaDAO();
-    
-    if (!(usuario instanceof Usuario)) {
-        throw new IllegalArgumentException("Los administradores no pueden apostar");
-    }
-    
-    Usuario usuarioNormal = (Usuario) usuario;
-    
-    // Guardar apuesta con estado 'A' (Activa) - NO procesar resultado aún
-    apuesta.setEstado('A'); // A = Activa (esperando resultado real)
-    apuestaDAO.add(apuesta);
-    
-    // Restar el monto de la apuesta del saldo del usuario
-    usuarioNormal.setDinero(usuarioNormal.getDinero() - apuesta.getMonto());
-    usuarioService.updateDinero(usuarioNormal);
-    
-    // NO procesar el resultado inmediatamente si es "pendiente"
-    ResultadoDAO resultadoDAO = new ResultadoDAO();
-    Resultado resultado = resultadoDAO.getResultadoByIdPartido(apuesta.getIdPartido());
-    
-    if (resultado != null && !"pendiente".equals(resultado.getGanador())) {
-        // Solo procesar si el resultado NO es "pendiente"
-        if (resultado.getGanador().equals(apuesta.getpor_quien())) {
-            usuarioNormal.setDinero(usuarioNormal.getDinero() + (apuesta.getMonto() * 2));
-            apuesta.setEstado('G'); // G = Ganada
-        } else {
-            apuesta.setEstado('P'); // P = Perdida
+    private void procesarApuesta(Apuesta apuesta, UsuarioBase usuario, UsuarioService usuarioService, ApuestaRepository apuestaRepo) {
+        if (!(usuario instanceof Usuario)) {
+            throw new IllegalArgumentException("Los administradores no pueden apostar");
         }
+        
+        Usuario usuarioNormal = (Usuario) usuario;
+        
+
+        apuestaRepo.guardar(apuesta);
+        
+
+        usuarioNormal.setDinero(usuarioNormal.getDinero() - apuesta.getMonto());
         usuarioService.updateDinero(usuarioNormal);
-        apuestaDAO.updateEstado(apuesta);
-    }
-    // Si es "pendiente", la apuesta queda como 'A' (Activa) hasta que el admin defina el resultado
-}
+        
 
-private void configurarRespuesta(HttpServletRequest request, Apuesta apuesta, UsuarioBase usuario) {
-    PartidoDAO partidoDAO = new PartidoDAO();
-    Partido partido = partidoDAO.getPartidoPorId(apuesta.getIdPartido());
-    
-    request.setAttribute("apuesta", apuesta);
-    request.setAttribute("partido", partido);
-    request.setAttribute("premio", apuesta.getMonto() * 2);
-    request.setAttribute("mensajeExito", "¡Apuesta realizada con éxito! El resultado se procesará cuando el partido finalice.");
-    request.getSession().setAttribute("userLogueado", usuario);
-}
+        ResultadoRepository resultadoRepo = null;
+        try {
+            resultadoRepo = new ResultadoRepository();
+            Resultado resultado = resultadoRepo.obtenerPorPartido(apuesta.getIdPartido());
+            
+            if (resultado != null && !"pendiente".equals(resultado.getGanador())) {
+                //  no pendiene
+                if (resultado.getGanador().equals(apuesta.getpor_quien())) {
+                    usuarioNormal.setDinero(usuarioNormal.getDinero() + (apuesta.getMonto() * 2));
+                    apuesta.setEstado('G'); // G = Ganada
+                } else {
+                    apuesta.setEstado('P'); // P = Perdida
+                }
+                usuarioService.updateDinero(usuarioNormal);
+                apuestaRepo.actualizarEstado(apuesta);
+            }
+
+            
+        } catch (Exception e) {
+            System.out.println("⚠️  Error al verificar resultado: " + e.getMessage());
+        } finally {
+            if (resultadoRepo != null) {
+                resultadoRepo.close();
+            }
+        }
+    }
+
+    private void configurarRespuesta(HttpServletRequest request, Apuesta apuesta, UsuarioBase usuario) {
+        PartidoRepository partidoRepo = null;
+        try {
+            partidoRepo = new PartidoRepository();
+            
+ 
+            Partido partido = partidoRepo.obtenerPorId(apuesta.getIdPartido());
+            
+            request.setAttribute("apuesta", apuesta);
+            request.setAttribute("partido", partido);
+            request.setAttribute("premio", apuesta.getMonto() * 2);
+            request.setAttribute("mensajeExito", "¡Apuesta realizada con éxito! El resultado se procesará cuando el partido finalice.");
+            request.getSession().setAttribute("userLogueado", usuario);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (partidoRepo != null) {
+                partidoRepo.close();
+            }
+        }
+    }
 
     private void mostrarError(HttpServletRequest request, HttpServletResponse response, String mensaje) 
             throws ServletException, IOException {

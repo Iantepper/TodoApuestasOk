@@ -12,7 +12,7 @@ public class ResultadoRepository {
         this.em = EntityManagerUtil.getEntityManagerFactory().createEntityManager();
     }
     
-    // CREATE - Reemplaza add()
+
     public void guardar(Resultado resultado) {
         try {
             em.getTransaction().begin();
@@ -26,7 +26,7 @@ public class ResultadoRepository {
         }
     }
     
-    // READ - Reemplaza getAllResultados()
+
     public List<Resultado> obtenerTodos() {
         TypedQuery<Resultado> query = em.createQuery(
             "SELECT r FROM Resultado r JOIN FETCH r.partido ORDER BY r.idResultado DESC", 
@@ -35,7 +35,7 @@ public class ResultadoRepository {
         return query.getResultList();
     }
     
-    // READ - Reemplaza getResultadoByIdPartido()
+
     public Resultado obtenerPorPartido(int idPartido) {
         TypedQuery<Resultado> query = em.createQuery(
             "SELECT r FROM Resultado r WHERE r.partido.idPartido = :idPartido", 
@@ -46,11 +46,11 @@ public class ResultadoRepository {
         try {
             return query.getSingleResult();
         } catch (Exception e) {
-            return null; // No hay resultado para este partido
+            return null; 
         }
     }
     
-    // READ - Reemplaza getIdResultadoByIdPartido()
+  
     public int obtenerIdResultadoPorPartido(int idPartido) {
         TypedQuery<Integer> query = em.createQuery(
             "SELECT r.idResultado FROM Resultado r WHERE r.partido.idPartido = :idPartido", 
@@ -65,7 +65,7 @@ public class ResultadoRepository {
         }
     }
     
-    // UPDATE 
+
     public void actualizar(Resultado resultado) {
         try {
             em.getTransaction().begin();
@@ -79,7 +79,7 @@ public class ResultadoRepository {
         }
     }
     
-    // Método para crear resultado inicial para un partido
+
     public void crearResultadoParaPartido(int idPartido, String ganador) {
         try {
             em.getTransaction().begin();

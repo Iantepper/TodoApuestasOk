@@ -49,7 +49,6 @@ public class UsuarioNuevoServlet extends HttpServlet {
             try {
                 usuarioRepo = new UsuarioRepository();
                 
-                // Verificar si usuario ya existe
                 if (usuarioRepo.existeUsuario(usuario)) {
                     request.setAttribute("hayError", true);
                     request.setAttribute("mensajeError", "El nombre de usuario ya existe.");
@@ -57,11 +56,13 @@ public class UsuarioNuevoServlet extends HttpServlet {
                     return;
                 }
                 
-                int idUsuario = usuarioRepo.crearUsuario(usuario, password, nombre, apellido, edad, dni);
+
+                usuarioRepo.crearUsuario(usuario, password, nombre, apellido, edad, dni);
                 request.getRequestDispatcher("/WEB-INF/jsp/usuarioCreado.jsp").forward(request, response);
                 
             } catch (Exception e) {
-                e.printStackTrace();
+
+                System.err.println("❌ Error creando usuario: " + e.getMessage());
                 request.setAttribute("hayError", true);
                 request.setAttribute("mensajeError", "Error al crear usuario. Intente más tarde.");
                 request.getRequestDispatcher("/WEB-INF/jsp/crearUsuario.jsp").forward(request, response);

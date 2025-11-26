@@ -12,7 +12,7 @@ public class ApuestaRepository {
         this.em = EntityManagerUtil.getEntityManagerFactory().createEntityManager();
     }
     
-    // CREATE - Reemplaza add()
+
     public void guardar(Apuesta apuesta) {
         try {
             em.getTransaction().begin();
@@ -26,7 +26,7 @@ public class ApuestaRepository {
         }
     }
     
-    // UPDATE - Reemplaza updateEstado()
+
     public void actualizarEstado(Apuesta apuesta) {
         try {
             em.getTransaction().begin();
@@ -40,7 +40,7 @@ public class ApuestaRepository {
         }
     }
     
-    // READ - Reemplaza getAllApuestasConResultado() (para admin)
+
     public List<Apuesta> obtenerTodasConDetalles() {
         TypedQuery<Apuesta> query = em.createQuery(
             "SELECT a FROM Apuesta a " +
@@ -53,7 +53,7 @@ public class ApuestaRepository {
         
         List<Apuesta> apuestas = query.getResultList();
         
-        // Cargar datos transient para compatibilidad
+
         for (Apuesta apuesta : apuestas) {
             if (apuesta.getPartido() != null) {
                 apuesta.setLocal(apuesta.getPartido().getLocal());
@@ -68,7 +68,7 @@ public class ApuestaRepository {
         return apuestas;
     }
     
-    // READ - Reemplaza getApuestasConResultadoPorUsuario() (para usuario normal)
+
     public List<Apuesta> obtenerPorUsuarioConDetalles(int idUsuario) {
         TypedQuery<Apuesta> query = em.createQuery(
             "SELECT a FROM Apuesta a " +
@@ -82,7 +82,7 @@ public class ApuestaRepository {
         
         List<Apuesta> apuestas = query.getResultList();
         
-        // Cargar datos transient para compatibilidad
+
         for (Apuesta apuesta : apuestas) {
             if (apuesta.getPartido() != null) {
                 apuesta.setLocal(apuesta.getPartido().getLocal());
@@ -94,12 +94,12 @@ public class ApuestaRepository {
         return apuestas;
     }
     
-    // Método auxiliar para obtener apuesta por ID
+
     public Apuesta obtenerPorId(int idApuesta) {
         return em.find(Apuesta.class, idApuesta);
     }
     
-    // Método para procesar apuestas cuando se define un resultado
+
     public void procesarApuestasPorResultado(int idPartido, String ganadorReal) {
         try {
             em.getTransaction().begin();

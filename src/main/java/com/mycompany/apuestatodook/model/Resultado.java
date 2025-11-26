@@ -17,21 +17,21 @@ public class Resultado {
     @JoinColumn(name = "fk_id_partido")
     private Partido partido;
 
-    // Constructor vacío (OBLIGATORIO para JPA)
+
     public Resultado() {}
 
-    // Tus constructores existentes
+ 
     public Resultado(int idResultado, String ganador, int idPartido) {
         this.idResultado = idResultado;
         this.ganador = ganador;
-        // El partido se setea después con setPartido()
+
     }
     
     public Resultado(String ganador) {
         this.ganador = ganador;
     }
 
-    // Getters y setters
+  
     public int getIdResultado() {
         return idResultado;
     }

@@ -7,7 +7,7 @@
 <div class="container mt-4">
     <div class="row">
         <div class="col-lg-6">
-            <div class="card card-billetera">  <!-- AGREGAR card-billetera -->
+            <div class="card card-billetera">  
                 <div class="card-header text-center">
                     <h3 class="mb-0">Tu Billetera</h3>
                 </div>
@@ -23,7 +23,7 @@
             </div>
         </div>
         <div class="col-lg-6">
-            <div class="card card-billetera">  <!-- AGREGAR card-billetera -->
+            <div class="card card-billetera">  
                 <div class="card-body">
                     <form action="Billetera" method="POST">
                         <h4 class="card-title">Agregar Dinero</h4>

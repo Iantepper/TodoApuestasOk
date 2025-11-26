@@ -1,4 +1,4 @@
- package com.mycompany.apuestatodook;
+package com.mycompany.apuestatodook;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -7,7 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import com.mycompany.apuestatodook.model.Partido;
-import com.mycompany.apuestatodook.model.PartidoDAO;
+import com.mycompany.apuestatodook.model.PartidoRepository;
 import com.mycompany.apuestatodook.model.Usuario;
 import com.mycompany.apuestatodook.model.UsuarioBase;
 import com.mycompany.apuestatodook.model.UsuarioService;
@@ -28,13 +28,16 @@ public class ApuestaServlet extends HttpServlet {
         
         int partidoId = Integer.parseInt(request.getParameter("id"));
         
-        PartidoDAO PartidoDAO = new PartidoDAO();
-        Partido partido = PartidoDAO.getPartidoPorId(partidoId);      
-        request.setAttribute("partido", partido);
-
+        PartidoRepository partidoRepo = null;
         UsuarioService usuarioService = null;
+        
         try {
+            partidoRepo = new PartidoRepository();
             usuarioService = new UsuarioService();
+            
+            Partido partido = partidoRepo.obtenerPorId(partidoId);      
+            request.setAttribute("partido", partido);
+
             double dineroUsuario = usuarioService.getDineroPorIdUsuario(usuario.getId());
 
             if (usuario instanceof Usuario) {
@@ -44,7 +47,14 @@ public class ApuestaServlet extends HttpServlet {
             
             request.setAttribute("dineroUsuario", dineroUsuario);
             request.getRequestDispatcher("WEB-INF/jsp/apuesta.jsp").forward(request, response);
+            
+        } catch (Exception e) {
+            System.err.println("❌ Error en Apuesta]: " + e.getMessage());
+
         } finally {
+            if (partidoRepo != null) {
+                partidoRepo.close();
+            }
             if (usuarioService != null) {
                 usuarioService.close();
             }

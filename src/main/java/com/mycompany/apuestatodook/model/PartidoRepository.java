@@ -2,6 +2,8 @@ package com.mycompany.apuestatodook.model;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class PartidoRepository {
@@ -12,19 +14,19 @@ public class PartidoRepository {
         this.em = EntityManagerUtil.getEntityManagerFactory().createEntityManager();
     }
     
-    // CREATE - Reemplaza add()
+
 public void guardar(Partido partido) {
     try {
         em.getTransaction().begin();
         
         if (partido.getIdPartido() == 0) {
-            em.persist(partido); // INSERT
-            em.flush(); // Forzar el INSERT para obtener el ID
+            em.persist(partido); 
+            em.flush(); 
             
-            // ✅ CREAR RESULTADO AUTOMÁTICAMENTE después de persistir el partido
+
             crearResultadoInicial(partido.getIdPartido());
         } else {
-            em.merge(partido); // UPDATE
+            em.merge(partido);
         }
         
         em.getTransaction().commit();
@@ -40,7 +42,7 @@ public void guardar(Partido partido) {
 
 private void crearResultadoInicial(int idPartido) {
     try {
-        // Verificar si ya existe resultado
+   
         TypedQuery<Long> query = em.createQuery(
             "SELECT COUNT(r) FROM Resultado r WHERE r.partido.idPartido = :idPartido", 
             Long.class
@@ -50,11 +52,11 @@ private void crearResultadoInicial(int idPartido) {
         Long count = query.getSingleResult();
         
         if (count == 0) {
-            // Crear resultado inicial
+
             Resultado resultado = new Resultado();
             resultado.setGanador("pendiente");
             
-            // Asociar con el partido
+
             Partido partido = em.find(Partido.class, idPartido);
             resultado.setPartido(partido);
             
@@ -63,11 +65,25 @@ private void crearResultadoInicial(int idPartido) {
         }
     } catch (Exception e) {
         System.out.println("⚠️  No se pudo crear resultado inicial: " + e.getMessage());
-        // No lanzar excepción para no revertir la transacción del partido
+
+    }
+}
+
+public Resultado obtenerResultadoPorPartido(int idPartido) {
+    TypedQuery<Resultado> query = em.createQuery(
+        "SELECT r FROM Resultado r WHERE r.partido.idPartido = :idPartido", 
+        Resultado.class
+    );
+    query.setParameter("idPartido", idPartido);
+    
+    try {
+        return query.getSingleResult();
+    } catch (Exception e) {
+        return null; 
     }
 }
     
-    // READ - Reemplaza getAll()
+
     public List<Partido> obtenerTodos() {
         TypedQuery<Partido> query = em.createQuery(
             "SELECT p FROM Partido p ORDER BY p.fecha ASC", Partido.class
@@ -75,21 +91,70 @@ private void crearResultadoInicial(int idPartido) {
         return query.getResultList();
     }
     
-    // READ - Reemplaza getPartidoPorId()
+
     public Partido obtenerPorId(int idPartido) {
         return em.find(Partido.class, idPartido);
     }
     
-    // READ - Reemplaza getPartidosFuturos()
+ 
     public List<Partido> obtenerPartidosFuturos() {
-        TypedQuery<Partido> query = em.createQuery(
-            "SELECT p FROM Partido p WHERE p.fecha > CURRENT_TIMESTAMP ORDER BY p.fecha ASC", 
+    try {
+        System.out.println("🔍 Buscando partidos FUTUROS...");
+        
+
+        TypedQuery<Partido> queryTodos = em.createQuery(
+            "SELECT p FROM Partido p ORDER BY p.fecha ASC", 
             Partido.class
         );
-        return query.getResultList();
+        List<Partido> todos = queryTodos.getResultList();
+        
+        System.out.println("📊 TOTAL partidos en BD: " + todos.size());
+        
+
+        List<Partido> futuros = new ArrayList<>();
+        for (Partido partido : todos) {
+            System.out.println("   📅 " + partido.getLocal() + " vs " + partido.getVisitante() + 
+                             " - Fecha: '" + partido.getFecha() + "'");
+            
+            if (esFechaFutura(partido.getFecha())) {
+                futuros.add(partido);
+                System.out.println("     ✅ ES FUTURO");
+            } else {
+                System.out.println("     ❌ ES PASADO");
+            }
+        }
+        
+        System.out.println("🎯 Partidos futuros encontrados: " + futuros.size());
+        return futuros;
+        
+    } catch (Exception e) {
+        System.out.println("💥 ERROR en obtenerPartidosFuturos: " + e.getMessage());
+        return new ArrayList<>();
     }
+}
     
-    // READ - Reemplaza getAllPartidosConResultado()
+    private boolean esFechaFutura(String fechaStr) {
+    try {
+ 
+        String fechaNormalizada = fechaStr.replace(" ", "T");
+        if (!fechaNormalizada.contains(".")) {
+            fechaNormalizada += ":00"; 
+        }
+        
+        LocalDateTime fechaPartido = LocalDateTime.parse(fechaNormalizada);
+        LocalDateTime ahora = LocalDateTime.now();
+        
+        System.out.println("   ⏰ Comparando: " + fechaPartido + " > " + ahora + " = " + fechaPartido.isAfter(ahora));
+        
+        return fechaPartido.isAfter(ahora);
+        
+    } catch (Exception e) {
+        System.out.println("⚠️  Error parseando fecha '" + fechaStr + "': " + e.getMessage());
+        return false;
+    }
+}
+    
+
     public List<Partido> obtenerPartidosConResultado() {
         TypedQuery<Partido> query = em.createQuery(
             "SELECT p FROM Partido p JOIN FETCH p.resultado r ORDER BY p.fecha ASC", 
@@ -98,7 +163,7 @@ private void crearResultadoInicial(int idPartido) {
         return query.getResultList();
     }
     
-    // DELETE - Reemplaza delete()
+
     public void eliminar(int idPartido) {
         try {
             em.getTransaction().begin();
@@ -117,7 +182,7 @@ private void crearResultadoInicial(int idPartido) {
         }
     }
     
-    // Método para actualizar resultado (combinación de lógica existente)
+
     public void actualizarResultado(int idPartido, String ganador) {
         try {
             em.getTransaction().begin();
@@ -162,7 +227,7 @@ private void crearResultadoInicial(int idPartido) {
         
         em.getTransaction().commit();
         
-        // Procesar apuestas después de actualizar resultado
+
         ApuestaRepository apuestaRepo = new ApuestaRepository();
         try {
             apuestaRepo.procesarApuestasPorResultado(idPartido, ganador);
