@@ -26,23 +26,27 @@
                                     </c:if>
                                 </div>
 
-                                  <form action="IngresoUsuario" method="POST" >
-                                  <p>Hola! Por favor inicie sesion</p>
+<form action="IngresoUsuario" method="POST" autocomplete="on">
+    <p>Hola! Por favor inicie sesion</p>
 
-                                  <div class="form-outline mb-4">
-                                    <input type="text" id="form2Example11" class="form-control"
-                                      placeholder="Usuario" name="usuario"/>
-                                    <label class="form-label" for="form2Example11">Usuario</label>
-                                  </div>
+<div class="form-outline mb-4">
+    <input type="text" id="username" class="form-control"
+          placeholder="Usuario" name="usuario" autocomplete="username"/>
+    <label class="form-label" for="username">Usuario</label>
+</div>
 
-                                  <div class="form-outline mb-4">
-                                    <input type="password" name="Contraseña" id="form2Example22" class="form-control" placeholder="*****" />
-                                    <label class="form-label" for="form2Example22">Contraseña</label>
-                                  </div>
+<div class="form-outline mb-4">
+    <input type="password" name="Contraseña" id="password" class="form-control" 
+           placeholder="*****" autocomplete="current-password" />
+    <label class="form-label" for="password">Contraseña</label>
+</div>
+
 
                                   <div class="text-center pt-1 mb-5 pb-1">
                                       <input type="hidden" name="deDondeViene" value="${param.origen}">
-                                      <button class="btn btn-success btn-block fa-lg gradient-custom-2 mb-3" type="submit">Ingresar</button>
+                                      <button class="btn btn-warning btn-lg w-100 fw-bold" type="submit" style="border-radius: 25px; padding: 12px;">
+    Ingresar
+</button>
                                     <a class="text-muted" href="#!">Olvido Contraseña?</a>
                                   </div>
 

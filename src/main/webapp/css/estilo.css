@@ -1,17 +1,22 @@
 body{
-    background-image:  url("../img/blackandgold.jfif");
-   text-align: center;
-   position: relative;
-   padding-bottom: 15em;
-   min-height: 100vh;
+    background: 
+        linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 50%, #2d1b00 100%),
+        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" opacity="0.03"><filter id="a"><feTurbulence baseFrequency="0.01 0.02"/></filter><rect width="100%" height="100%" filter="url(%23a)"/></svg>'),
+        radial-gradient(circle at 20% 80%, rgba(255,215,0,0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255,215,0,0.05) 0%, transparent 50%);
+    background-attachment: fixed;
+    color: #e2e8f0;
+    text-align: center;
+    position: relative;
+    min-height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+
 #apuestaTodo{
-    
     height: 500px;
     width: 200px;
 }
-
 
 .container-fluid{
     margin-left: 70px;
@@ -95,7 +100,6 @@ body{
     margin: auto;
 }
 
-
 #Formulario-InicioSesion{
     justify-content: center;
     display: grid;
@@ -117,55 +121,55 @@ body{
 }
 
 footer {
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-            background-color: black;
-            color: white;
-            padding: 10px;
-            text-align: center;
-            font-size: 14px;
-        }
-        .footer-content {
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            flex-wrap: wrap; 
-            gap: 20px;
-        }
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background-color: black;
+    color: white;
+    padding: 10px;
+    text-align: center;
+    font-size: 14px;
+}
+.footer-content {
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    flex-wrap: wrap; 
+    gap: 20px;
+}
 
-        .footer-column {
-            flex: 1; 
-            text-align: left; 
-            max-width: calc(25% - 20px);
-        }
+.footer-column {
+    flex: 1; 
+    text-align: left; 
+    max-width: calc(25% - 20px);
+}
 
-        .footer-column h3 {
-            color: #c69749;
-            font-size: 18px;
-        }
+.footer-column h3 {
+    color: #c69749;
+    font-size: 18px;
+}
 
-        .footer-column p {
-            margin: 0;
-            font-size: 12px
-        .btn-social {
-                font-size: 20px; 
-                margin: 5px; 
-            }
-        .btn-social i {
-                color: white;
-            }
-        }
+.footer-column p {
+    margin: 0;
+    font-size: 12px;
+}
+.btn-social {
+    font-size: 20px; 
+    margin: 5px; 
+}
+.btn-social i {
+    color: white;
+}
 
 .tabla-grande {
-    font-size: 18px; /* Tamaño de fuente más grande */
-    border-collapse: collapse; /* Combina los bordes de las celdas */
-    width: 100%; /* Ancho de la tabla al 100% del contenedor */
+    font-size: 18px;
+    border-collapse: collapse;
+    width: 100%;
 }
 
 .tabla-grande th, .tabla-grande td {
-    padding: 10px; /* Espaciado interno mayor */
-    text-align: center; /* Alineación de texto al centro */
+    padding: 10px;
+    text-align: center;
 }
 
 @media (min-width: 768px) {
@@ -194,9 +198,9 @@ height: 100vh;
 }
 .partido-burbuja {
     background-image: url('../img/202895-plain-yellow-and-white-background-graphic.jpg');
-    background-size: cover; /* Escalar la imagen para cubrir todo el contenedor */
-    background-position: center; /* Centrar la imagen */
-    background-repeat: no-repeat; /* Evitar la repetición de la imagen */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     border: 2px solid #333;
     padding: 10px;
     text-align: center;
@@ -214,26 +218,27 @@ height: 100vh;
     color: darkgreen;
 }
 .btn-navbar {
-  background-color: #999999; /* Código de color naranja como ejemplo */
-  color: black; /* Color de texto */
+  background-color: #999999;
+  color: black;
  font-weight: 900;
 }
 #lineadebajo-navbar{
-    border-color: white;/* Cambia el color a tu preferencia */
-  border-width: 3px; /* Establece el grosor de la línea */
-  margin: 0; /* Ajusta el margen si es necesario */
+    border-color: white;
+  border-width: 3px;
+  margin: 0;
 }
 .mi-lista {
     background-color: black;
   padding: 6px; 
 }
 .footer-logo img {
-           width: 50px; 
-           height: auto; 
-            }
-.col-md-4 h4, .col-md-4 p, .form-control {
-    font-size: 20px; /* Ajusta el valor según el tamaño deseado */
+    width: 50px; 
+    height: auto; 
 }
+.col-md-4 h4, .col-md-4 p, .form-control {
+    font-size: 20px;
+}
+
 /* Estilos para billetera */
 .card-billetera {
     background: linear-gradient(135deg, #FFD700, #D4AF37);
@@ -280,6 +285,7 @@ height: 100vh;
     border: 2px solid #000;
     color: #000;
 }
+
 /* Estilos para admin partidos */
 .admin-partidos-container {
     background: linear-gradient(135deg, #FFD700, #D4AF37);
@@ -332,35 +338,57 @@ height: 100vh;
     border: 2px solid #000;
 }
 
-/* ===== ESTILOS PARA APUESTAS ===== */
+/* ===== ESTILOS PARA APUESTAS - TEMA DORADO Y NEGRO ===== */
 :root {
-    --color-primary: #ffd700;     /* Amarillo dorado principal */
-    --color-primary-dark: #e6c200; /* Amarillo dorado oscuro */
-    --color-secondary: #2c3e50;   /* Azul oscuro elegante */
-    --color-accent: #e74c3c;      /* Rojo para contraste */
-    --color-success: #27ae60;     /* Verde para éxitos */
-    --color-light: #f8f9fa;       /* Fondo claro */
-    --color-dark: #343a40;        /* Texto oscuro */
+    --color-primary: #ffd700;
+    --color-primary-dark: #e6c200;
+    --color-secondary: #2c3e50;
+    --color-accent: #e74c3c;
+    --color-success: #27ae60;
+    --color-light: #f8f9fa;
+    --color-dark: #343a40;
 }
 
 .apuesta-container {
-    background: linear-gradient(135deg, var(--color-secondary) 0%, #34495e 100%);
+    background: 
+        linear-gradient(135deg, rgba(26,26,26,0.95) 0%, rgba(45,55,72,0.95) 100%),
+        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" opacity="0.03"><rect width="100" height="100" fill="none" stroke="%23ffd700" stroke-width="2"/><path d="M0,0 L100,100 M100,0 L0,100" stroke="%23ffd700" stroke-width="1" opacity="0.5"/></svg>');
     border-radius: 20px;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-    margin-top: 30px;
+    box-shadow: 
+        0 15px 35px rgba(255, 215, 0, 0.15),
+        inset 0 1px 0 rgba(255,255,255,0.1),
+        inset 0 -1px 0 rgba(0,0,0,0.5);
+    margin: 30px auto;
     overflow: hidden;
-    border: 3px solid var(--color-primary);
+    border: 2px solid;
+    border-image: linear-gradient(45deg, #ffd700, #d4af37, #ffd700) 1;
+    max-width: 1200px;
+    position: relative;
 }
-
+.apuesta-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 30% 30%, rgba(255,215,0,0.1) 0%, transparent 50%),
+        radial-gradient(circle at 70% 70%, rgba(255,215,0,0.05) 0%, transparent 50%);
+    pointer-events: none;
+    border-radius: 20px;
+}
 .equipo-card {
-    background: var(--color-light);
+    background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
     border-radius: 15px;
     padding: 30px;
     text-align: center;
     transition: all 0.3s ease;
     height: 100%;
-    border: 3px solid transparent;
+    border: 2px solid #4a5568;
     position: relative;
+    margin: 10px;
+    color: #ffffff;
 }
 
 .equipo-card::before {
@@ -371,11 +399,13 @@ height: 100vh;
     right: 0;
     height: 4px;
     background: linear-gradient(90deg, var(--color-primary), var(--color-primary-dark));
+    border-radius: 15px 15px 0 0;
 }
 
 .equipo-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(255, 215, 0, 0.3);
+    box-shadow: 0 10px 25px rgba(255, 215, 0, 0.2);
+    border-color: #ffd700;
 }
 
 .equipo-card.local:hover {
@@ -390,18 +420,24 @@ height: 100vh;
     font-size: 1.8rem;
     font-weight: bold;
     margin-bottom: 20px;
-    color: var(--color-secondary);
+    color: #ffd700;
     text-transform: uppercase;
     letter-spacing: 1px;
+    font-family: 'Oswald', sans-serif;
 }
 
 .info-central {
-    background: rgba(255, 255, 255, 0.95);
+    background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
     border-radius: 15px;
     padding: 25px;
     text-align: center;
     height: 100%;
-    border: 2px solid var(--color-primary);
+    border: 2px solid #ffd700;
+    margin: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: #ffffff;
 }
 
 .saldo-info {
@@ -410,7 +446,7 @@ height: 100vh;
     padding: 20px;
     margin-top: 15px;
     font-weight: bold;
-    color: var(--color-secondary);
+    color: #1a1a1a;
     border: 2px solid #fff;
     box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
 }
@@ -420,20 +456,26 @@ height: 100vh;
 }
 
 .input-monto {
-    border: 2px solid #e9ecef;
+    border: 2px solid #4a5568;
     border-radius: 12px;
     padding: 15px;
     font-size: 1.2rem;
     text-align: center;
     transition: all 0.3s ease;
     font-weight: bold;
-    background: var(--color-light);
+    background: #2d3748;
+    color: #ffffff;
+}
+
+.input-monto::placeholder {
+    color: #a0aec0;
 }
 
 .input-monto:focus {
     border-color: var(--color-primary);
     box-shadow: 0 0 0 0.3rem rgba(255, 215, 0, 0.25);
-    background: white;
+    background: #4a5568;
+    color: #ffffff;
 }
 
 .btn-apostar {
@@ -460,7 +502,7 @@ height: 100vh;
 
 .partido-fecha {
     font-size: 1.1rem;
-    color: var(--color-secondary);
+    color: #ffd700;
     margin-bottom: 20px;
     font-weight: 600;
 }
@@ -468,9 +510,9 @@ height: 100vh;
 .vs-text {
     font-size: 2.5rem;
     font-weight: bold;
-    color: var(--color-secondary);
+    color: #ffd700;
     margin: 20px 0;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
 }
 
 .alert-error {
@@ -485,21 +527,22 @@ height: 100vh;
 .saldo-amount {
     font-size: 2.5rem;
     font-weight: bold;
-    color: var(--color-secondary);
+    color: #1a1a1a;
     text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
 }
 
 .info-text {
-    color: var(--color-secondary);
+    color: #e2e8f0;
     font-weight: 500;
 }
 
 /* ===== ESTILOS PARA APUESTA CREADA ===== */
 .success-card {
-    background: linear-gradient(135deg, var(--color-light) 0%, #ffffff 100%);
+    background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
     border-radius: 20px;
     border: 3px solid var(--color-primary);
     box-shadow: 0 15px 35px rgba(255, 215, 0, 0.2);
+    color: #ffffff;
 }
 
 .success-icon {
@@ -513,7 +556,7 @@ height: 100vh;
     border-radius: 15px;
     padding: 25px;
     margin: 20px 0;
-    color: var(--color-secondary);
+    color: #1a1a1a;
     border: 2px solid #fff;
     box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
 }
@@ -605,6 +648,7 @@ height: 100vh;
     color: #383d41;
     border: 1px solid #d6d8db;
 }
+
 /* ===== CORRECCIONES PARA COMPONENTES ===== */
 
 /* Navbar correcciones */
@@ -670,9 +714,13 @@ height: 100vh;
 
 /* Barra de deportes */
 .mi-lista {
-    background-color: black;
+    background: 
+        linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 50%, #2d1b00 100%),
+        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="150" height="150" opacity="0.03"><defs><pattern id="grid" width="15" height="15" patternUnits="userSpaceOnUse"><path d="M15,0 L0,0 L0,15" fill="none" stroke="%23ffd700" stroke-width="0.3"/></pattern></defs><rect width="150" height="150" fill="url(%23grid)"/><circle cx="75" cy="75" r="2" fill="%23ffd700" opacity="0.1"/></svg>');
+    background-attachment: fixed;
     padding: 10px 0;
     margin: 0;
+    border-bottom: 1px solid rgba(255,215,0,0.2);
 }
 
 .navlink.mi-link-barra {
@@ -690,166 +738,7 @@ height: 100vh;
     color: black;
 }
 
-/* ===== ESTILOS PARA APUESTAS - VERSIÓN CORREGIDA ===== */
-:root {
-    --color-primary: #ffd700;
-    --color-primary-dark: #e6c200;
-    --color-secondary: #2c3e50;
-    --color-accent: #e74c3c;
-    --color-success: #27ae60;
-    --color-light: #f8f9fa;
-    --color-dark: #343a40;
-}
-
-.apuesta-container {
-    background: linear-gradient(135deg, var(--color-secondary) 0%, #34495e 100%);
-    border-radius: 20px;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-    margin: 30px auto;
-    overflow: hidden;
-    border: 3px solid var(--color-primary);
-    max-width: 1200px;
-}
-
-.equipo-card {
-    background: white;
-    border-radius: 15px;
-    padding: 30px;
-    text-align: center;
-    transition: all 0.3s ease;
-    height: 100%;
-    border: 3px solid transparent;
-    position: relative;
-    margin: 10px;
-}
-
-.equipo-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, var(--color-primary), var(--color-primary-dark));
-    border-radius: 15px 15px 0 0;
-}
-
-.equipo-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(255, 215, 0, 0.3);
-}
-
-.equipo-card.local:hover {
-    border-color: var(--color-success);
-}
-
-.equipo-card.visitante:hover {
-    border-color: var(--color-accent);
-}
-
-.equipo-nombre {
-    font-size: 1.8rem;
-    font-weight: bold;
-    margin-bottom: 20px;
-    color: var(--color-secondary);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-family: 'Oswald', sans-serif;
-}
-
-.info-central {
-    background: white;
-    border-radius: 15px;
-    padding: 25px;
-    text-align: center;
-    height: 100%;
-    border: 2px solid var(--color-primary);
-    margin: 10px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-.saldo-info {
-    background: linear-gradient(45deg, var(--color-primary), var(--color-primary-dark));
-    border-radius: 15px;
-    padding: 20px;
-    margin-top: 15px;
-    font-weight: bold;
-    color: var(--color-secondary);
-    border: 2px solid #fff;
-    box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
-}
-/* ===== ESTILOS PARA FOOTER ===== */
-footer {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    background-color: black;
-    color: white;
-    padding: 20px 0;
-    text-align: center;
-    font-size: 14px;
-    margin-top: 50px;
-}
-
-.footer-content {
-    display: flex; 
-    justify-content: center; 
-    align-items: flex-start; 
-    flex-wrap: wrap; 
-    gap: 30px;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
-}
-
-.footer-column {
-    flex: 1; 
-    text-align: center; 
-    min-width: 200px;
-    max-width: 250px;
-}
-
-.footer-column h3 {
-    color: #ffd700;
-    font-size: 18px;
-    margin-bottom: 15px;
-    font-family: 'Oswald', sans-serif;
-}
-
-.footer-column p {
-    margin: 8px 0;
-    font-size: 14px;
-    line-height: 1.4;
-}
-
-.footer-column a {
-    color: #ffd700;
-    text-decoration: none;
-    transition: color 0.3s ease;
-}
-
-.footer-column a:hover {
-    color: #fff;
-    text-decoration: underline;
-}
-
-.footer-logo img {
-    width: 60px;
-    height: auto;
-    margin: 10px 0;
-    border-radius: 5px;
-}
-
-.footer-info {
-    margin-top: 15px;
-    padding-top: 15px;
-    border-top: 1px solid #333;
-}
-
-/* ===== FOOTER SIMPLIFICADO - ALTERNATIVA SIN MODIFICAR JSPs ===== */
-/* ===== FOOTER NORMAL - SE MUEVE CON EL CONTENIDO ===== */
+/* ===== FOOTER SIMPLIFICADO ===== */
 .footer-simple {
     background: linear-gradient(135deg, #000000, #2c3e50);
     color: #ffd700;
@@ -858,9 +747,8 @@ footer {
     font-size: 12px;
     border-top: 3px solid #ffd700;
     width: 100%;
-    /* QUITAR position: absolute o fixed */
     position: static;
-    margin-top: 40px; /* Espacio antes del footer */
+    margin-top: 40px;
 }
 
 .footer-simple-content {
@@ -885,9 +773,7 @@ footer {
     letter-spacing: 0.5px;
 }
 
-/* QUITAR estos estilos del body que causan problemas */
+/* Asegurar que el body no tenga padding-bottom problemático */
 body {
     padding-bottom: 0 !important;
-    position: relative;
-    min-height: 100vh;
 }
