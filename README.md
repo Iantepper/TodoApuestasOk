@@ -40,9 +40,14 @@ Configuración de Base de Datos
 4. Ir a Importar → Seleccionar `BaseDatos/apuesta.sql`
 5. Click Importar
 
+ Usuarios para testeo
+juan123 // password123 (user)
+admin // admin (admin)
+
 Configuración en `persistence.xml`:
 
 ```xml
 <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/apuesta"/>
 <property name="jakarta.persistence.jdbc.user" value="root"/>
 <property name="jakarta.persistence.jdbc.password" value=""/>
+
