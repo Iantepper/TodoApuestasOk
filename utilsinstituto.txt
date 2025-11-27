@@ -1,0 +1,338 @@
+Abre la terminal (Ctrl + Alt + T) y ejecuta:
+
+bash
+# Verificar Java
+java -version
+javac -version
+
+# Verificar Maven
+mvn -version
+
+# Verificar MySQL/MariaDB
+mysql --version
+
+# Verificar si hay Tomcat
+sudo systemctl status tomcat*
+📥 PASO 2: INSTALAR LO QUE FALTE
+bash
+# Actualizar sistema primero
+sudo apt update && sudo apt upgrade -y
+
+# Instalar Java 17 (si no está)
+sudo apt install openjdk-17-jdk -y
+
+# Instalar Maven
+sudo apt install maven -y
+
+# Instalar MySQL/MariaDB
+sudo apt install mariadb-server -y
+
+# Instalar Tomcat 10
+sudo apt install tomcat10 tomcat10-admin -y
+🗄️ PASO 3: CONFIGURAR BASE DE DATOS
+bash
+# Acceder a MySQL
+sudo mysql -u root
+
+# Dentro de MySQL, ejecutar:
+CREATE DATABASE apuesta;
+CREATE USER 'apuesta_user'@'localhost' IDENTIFIED BY 'password123';
+GRANT ALL PRIVILEGES ON apuesta.* TO 'apuesta_user'@'localhost';
+FLUSH PRIVILEGES;
+EXIT;
+📁 PASO 4: PREPARAR EL PROYECTO
+bash
+# Navegar al directorio del proyecto (ajusta la ruta)
+cd ~/Descargas/ProyectoTodoApuestasOk
+
+# Si es un archivo .zip, descomprimir:
+# unzip proyecto.zip -d ProyectoTodoApuestasOk
+🔧 PASO 5: CONFIGURAR persistence.xml
+Edita el archivo src/main/resources/META-INF/persistence.xml:
+
+xml
+<property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/apuesta"/>
+<property name="jakarta.persistence.jdbc.user" value="apuesta_user"/>
+<property name="jakarta.persistence.jdbc.password" value="password123"/>
+🗃️ PASO 6: IMPORTAR BASE DE DATOS
+bash
+# Ejecutar el script SQL (ajusta la ruta)
+sudo mysql -u root -p apuesta < BaseDatos/apuesta.sql
+🏗️ PASO 7: COMPILAR CON MAVEN
+bash
+# Dentro del directorio del proyecto
+mvn clean compile
+mvn package
+Esto creará un archivo .war en la carpeta target/
+
+🚀 PASO 8: DESPLEGAR EN TOMCAT
+bash
+# Copiar el .war a Tomcat
+sudo cp target/ApuestaTodook.war /var/lib/tomcat10/webapps/
+
+# Reiniciar Tomcat
+sudo systemctl restart tomcat10
+
+# Verificar que esté corriendo
+sudo systemctl status tomcat10
+🌐 PASO 9: ACCEDER AL PROYECTO
+Abre el navegador y ve a:
+
+text
+http://localhost:8080/ApuestaTodook
+⚠️ POSIBLES PROBLEMAS Y SOLUCIONES
+❌ Problema 1: Java no encontrado
+bash
+# Establecer Java 17 como predeterminado
+sudo update-alternatives --config java
+# Seleccionar Java 17
+❌ Problema 2: Puerto 8080 ocupado
+bash
+# Ver qué usa el puerto 8080
+sudo netstat -tulpn | grep 8080
+
+# Cambiar puerto de Tomcat si es necesario
+sudo nano /etc/tomcat10/server.xml
+# Buscar "8080" y cambiar por "8081"
+❌ Problema 3: Permisos denegados
+bash
+# Dar permisos a tu usuario
+sudo usermod -a -G tomcat $USER
+# Cerrar sesión y volver a entrar
+❌ Problema 4: Error de base de datos
+bash
+# Reiniciar MySQL
+sudo systemctl restart mariadb
+
+# Verificar que la BD se creó
+sudo mysql -u root -p -e "SHOW DATABASES;"
+🎯 COMANDOS ÚTILES PARA VERIFICAR
+bash
+# Ver logs de Tomcat en tiempo real
+sudo tail -f /var/log/tomcat10/catalina.out
+
+# Ver servicios activos
+sudo systemctl list-units --type=service | grep -E '(tomcat|mariadb)'
+
+# Ver espacio en disco
+df -h
+
+# Ver versión de Kubuntu
+lsb_release -a
+📋 CHECKLIST PRE-PRESENTACIÓN
+Java 17 instalado y configurado
+
+Maven funciona correctamente
+
+MySQL/MariaDB corriendo
+
+Base de datos importada
+
+Proyecto compilado sin errores
+
+Tomcat 10 activo
+
+Aplicación desplegada
+
+Acceso vía navegador funcionando
+
+🆘 SI TODO FALLA...
+Plan B: Usar el IDE directamente
+
+bash
+# Instalar NetBeans
+sudo snap install netbeans --classic
+
+# Abrir NetBeans y importar proyecto como "Maven Project"
+Plan C: Ejecutar con Jetty embebido
+
+bash
+mvn jetty:run
+¡Con esta guía deberías poder ejecutar tu proyecto sin problemas! ¿Necesitas ayuda con algún paso específico?
+
+hace de nuevo el paso a paso con las siguientes contextos, es un repo que lo voya a clonar, voya  usar netbeans, y xamp , puedo darle admin en xamp en linux? porque si puedo abrir mysql en un browser voy a importar la bdd que esta exportada en el repo
+¡Perfecto! Aquí tienes el paso a paso adaptado para Kubuntu con Git, NetBeans y XAMPP:
+
+🐧 GUÍA PARA KUBUNTU CON GIT, NETBEANS Y XAMPP
+📥 PASO 1: CLONAR EL REPOSITORIO
+bash
+# Abrir terminal (Ctrl + Alt + T)
+cd ~/Descargas  # o donde quieras clonar el proyecto
+
+# Clonar el repo (reemplaza con tu URL)
+git clone [url-de-tu-repositorio]
+cd [nombre-del-repositorio]
+🛠️ PASO 2: INSTALAR XAMPP EN LINUX
+bash
+# Descargar XAMPP para Linux
+wget https://www.apachefriends.org/xampp-files/8.2.12/xampp-linux-x64-8.2.12-0-installer.run
+
+# Dar permisos de ejecución
+chmod +x xampp-linux-x64-8.2.12-0-installer.run
+
+# Ejecutar instalador (necesitas interfaz gráfica)
+sudo ./xampp-linux-x64-8.2.12-0-installer.run
+O instalar desde la web:
+
+Ve a Apache Friends
+
+Descarga XAMPP para Linux
+
+Ejecuta el instalador
+
+🚀 PASO 3: INICIAR XAMPP
+bash
+# Iniciar XAMPP
+sudo /opt/lampp/lampp start
+
+# Verificar que esté corriendo
+sudo /opt/lampp/lampp status
+🌐 PASO 4: ACCEDER A phpMyAdmin (ADMIN DE XAMPP)
+Abre el navegador y ve a:
+
+text
+http://localhost/phpmyadmin
+Credenciales por defecto:
+
+Usuario: root
+
+Contraseña: "" (vacía)
+
+🗄️ PASO 5: IMPORTAR LA BASE DE DATOS
+En phpMyAdmin:
+
+Click en "Importar" en el menú superior
+
+Click en "Seleccionar archivo"
+
+Navega a tu proyecto clonado: [tu-repo]/BaseDatos/apuesta.sql
+
+Click en "Continuar"
+
+O por terminal:
+
+bash
+# Importar directamente
+sudo /opt/lampp/bin/mysql -u root < [ruta-a-tu-repo]/BaseDatos/apuesta.sql
+☕ PASO 6: INSTALAR NETBEANS
+bash
+# Instalar NetBeans desde Snap (más fácil)
+sudo snap install netbeans --classic
+
+# O descargar desde la web oficial
+⚙️ PASO 7: CONFIGURAR PERSISTENCE.XML
+Edita src/main/resources/META-INF/persistence.xml:
+
+xml
+<property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/apuesta"/>
+<property name="jakarta.persistence.jdbc.user" value="root"/>
+<property name="jakarta.persistence.jdbc.password" value=""/>
+🖥️ PASO 8: ABRIR PROYECTO EN NETBEANS
+Abre NetBeans
+
+File > Open Project
+
+Navega a la carpeta de tu proyecto clonado
+
+Selecciona la carpeta del proyecto
+
+Click en "Open Project"
+
+🔧 PASO 9: CONFIGURAR TOMCAT EN NETBEANS
+Tools > Servers
+
+Click "Add Server"
+
+Selecciona Tomcat 10
+
+En "Server Location" pon: /opt/lampp/tomcat
+
+Configura credenciales si es necesario
+
+🏗️ PASO 10: COMPILAR Y EJECUTAR
+En NetBeans:
+
+Click derecho en el proyecto
+
+Clean and Build
+
+Run (o Debug)
+
+🌐 PASO 11: ACCEDER A LA APLICACIÓN
+text
+http://localhost:8080/ApuestaTodook
+⚠️ SOLUCIÓN DE PROBLEMAS ESPECÍFICOS
+❌ XAMPP no inicia MySQL
+bash
+# Verificar si hay conflictos de puertos
+sudo netstat -tulpn | grep :3306
+
+# Si hay conflicto, detener servicio MySQL de sistema
+sudo systemctl stop mysql
+sudo systemctl disable mysql
+
+# Reiniciar XAMPP
+sudo /opt/lampp/lampp restart
+❌ NetBeans no encuentra Java
+bash
+# Verificar instalación de Java
+sudo apt install openjdk-17-jdk -y
+
+# Establecer Java predeterminado
+sudo update-alternatives --config java
+❌ Error de permisos en XAMPP
+bash
+# Dar permisos adecuados
+sudo chmod -R 755 /opt/lampp/htdocs
+sudo chown -R $USER:$USER /opt/lampp
+❌ No puede acceder a phpMyAdmin
+bash
+# Reiniciar XAMPP completamente
+sudo /opt/lampp/lampp stop
+sudo /opt/lampp/lampp start
+📋 COMANDOS ÚTILES XAMPP
+bash
+# Iniciar XAMPP
+sudo /opt/lampp/lampp start
+
+# Detener XAMPP
+sudo /opt/lampp/lampp stop
+
+# Reiniciar XAMPP
+sudo /opt/lampp/lampp restart
+
+# Ver estado
+sudo /opt/lampp/lampp status
+
+# Logs de MySQL
+tail -f /opt/lampp/var/mysql/[nombre-pc].err
+🎯 CHECKLIST RÁPIDO
+Repositorio clonado ✓
+
+XAMPP instalado y corriendo ✓
+
+MySQL iniciado en XAMPP ✓
+
+Base de datos importada en phpMyAdmin ✓
+
+NetBeans instalado ✓
+
+Proyecto abierto en NetBeans ✓
+
+persistence.xml configurado ✓
+
+Clean and Build exitoso ✓
+
+Aplicación ejecutándose ✓
+
+💡 CONSEJOS EXTRA
+Mantén XAMPP abierto durante la presentación
+
+Verifica phpMyAdmin antes de empezar
+
+Haz un Clean and Build final antes de presentar
+
+Ten la terminal abierta por si necesitas reiniciar servicios
+
+¡Con esta configuración tendrás control total tanto de la base de datos como del código! ¿Necesitas ayuda con algún paso específico?
+
