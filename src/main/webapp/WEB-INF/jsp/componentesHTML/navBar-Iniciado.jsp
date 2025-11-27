@@ -52,7 +52,7 @@
                         </li>
                     </c:if>
                     <li class="nav-item">
-                        <a href="${pageContext.request.contextPath}/Salir" class="btn btn-danger btn-navbar">Logout</a>
+                        <a href="${pageContext.request.contextPath}/Salir" class="btn btn-danger btn-navbar">Salir</a>
                     </li>
                 </c:otherwise>
             </c:choose> 

@@ -8,7 +8,7 @@
         <!-- Tarjeta de Saldo -->
         <div class="col-lg-6 mb-4">
             <div class="card card-billetera shadow">  
-                <div class="card-header text-center bg-primary text-white">
+                <div class="card-header text-center bg-success text-white">
                     <h3 class="mb-0"><i class="fas fa-wallet me-2"></i>Tu Billetera</h3>
                 </div>
                 <div class="card-body text-center">
@@ -52,7 +52,7 @@
                     
                     <!-- Formulario Retirar Dinero -->
                     <div class="p-3 border rounded">
-                        <h6 class="text-warning"><i class="fas fa-minus-circle me-2"></i>Retirar Dinero</h6>
+                        <h6 class="text-succes"><i class="fas fa-minus-circle me-2"></i>Retirar Dinero</h6>
                         <form action="Billetera" method="POST" class="mt-3">
                             <input type="hidden" name="Modificar" value="retiro">
                             <div class="mb-3">
@@ -61,7 +61,7 @@
                                        placeholder="Ej: 500" min="100" step="100" required>
                                 <div class="form-text">Monto mínimo: $100 | Saldo disponible: $${dinero}</div>
                             </div>
-                            <button type="submit" class="btn btn-warning w-100">
+                            <button type="submit" class="btn btn-success w-100">
                                 <i class="fas fa-check me-1"></i>Confirmar Retiro
                             </button>
                         </form>

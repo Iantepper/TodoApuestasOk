@@ -217,20 +217,8 @@ height: 100vh;
 .fecha {
     color: darkgreen;
 }
-.btn-navbar {
-  background-color: #999999;
-  color: black;
- font-weight: 900;
-}
-#lineadebajo-navbar{
-    border-color: white;
-  border-width: 3px;
-  margin: 0;
-}
-.mi-lista {
-    background-color: black;
-  padding: 6px; 
-}
+
+
 .footer-logo img {
     width: 50px; 
     height: auto; 
@@ -649,61 +637,13 @@ height: 100vh;
     border: 1px solid #d6d8db;
 }
 
-/* ===== CORRECCIONES PARA COMPONENTES ===== */
-
-/* Navbar correcciones */
-.navbar-custom {
-    background-image: url("../img/yellowtriangles.jpg");
-    background-size: cover;
-}
-
-.navbar-brand {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-#logo-nav {
-    max-height: 80px;
-    width: auto;
-}
 
 #apuestaTodo {
     max-height: 80px;
     width: auto;
 }
 
-/* Correcciones para los enlaces de la navbar */
-.navbar-nav .nav-link.mi-link-barra {
-    font-weight: 600;
-    background-color: #ccc414;
-    color: black;
-    text-decoration: none;
-    padding: 8px 15px;
-    border-radius: 5px;
-    margin: 5px;
-    transition: background-color 0.3s ease;
-}
 
-.navbar-nav .nav-link.mi-link-barra:hover {
-    background-color: #ad8a1f;
-    color: black;
-}
-
-/* Botón logout */
-.btn-navbar {
-    background-color: #dc3545;
-    color: white;
-    font-weight: 900;
-    padding: 8px 15px;
-    border-radius: 5px;
-    margin: 5px;
-}
-
-.btn-navbar:hover {
-    background-color: #c82333;
-    color: white;
-}
 
 /* Línea debajo del navbar */
 #lineadebajo-navbar {
@@ -712,31 +652,8 @@ height: 100vh;
     margin: 0;
 }
 
-/* Barra de deportes */
-.mi-lista {
-    background: 
-        linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 50%, #2d1b00 100%),
-        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="150" height="150" opacity="0.03"><defs><pattern id="grid" width="15" height="15" patternUnits="userSpaceOnUse"><path d="M15,0 L0,0 L0,15" fill="none" stroke="%23ffd700" stroke-width="0.3"/></pattern></defs><rect width="150" height="150" fill="url(%23grid)"/><circle cx="75" cy="75" r="2" fill="%23ffd700" opacity="0.1"/></svg>');
-    background-attachment: fixed;
-    padding: 10px 0;
-    margin: 0;
-    border-bottom: 1px solid rgba(255,215,0,0.2);
-}
 
-.navlink.mi-link-barra {
-    font-weight: 600;
-    background-color: #ccc414;
-    color: black;
-    text-decoration: none;
-    padding: 8px 15px;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
-}
 
-.navlink.mi-link-barra:hover {
-    background-color: #ad8a1f;
-    color: black;
-}
 
 /* ===== FOOTER SIMPLIFICADO ===== */
 .footer-simple {
@@ -777,3 +694,118 @@ height: 100vh;
 body {
     padding-bottom: 0 !important;
 }
+
+/* ===== NAVBAR CONSOLIDADO - ESTILOS MINIMALISTAS ===== */
+
+/* Navbar Principal */
+.navbar {
+    background-image: url("../img/yellowtriangles.jpg");
+    background-size: cover;
+    padding: 0.5rem 0;
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.navbar-logo {
+    max-height: 80px;
+    width: auto;
+}
+
+#apuestaTodo {
+    max-height: 80px;
+    width: auto;
+}
+
+.navbar-apuesta {
+    font-size: 50px;
+    font-weight: 900;
+    color: black;
+    text-decoration: none;
+}
+
+.navbar-todocom {
+    font-size: 25px;
+    font-weight: 600;
+    color: black;
+}
+
+/* Enlaces de Navegación */
+.navbar-nav .nav-link {
+    font-weight: 600;
+    background-color: #ccc414;
+    color: black;
+    text-decoration: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    margin: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover {
+    background-color: #ad8a1f;
+    color: black;
+}
+
+/* Botón Logout */
+.btn-navbar {
+    background-color: #dc3545;
+    color: white;
+    font-weight: 900;
+    padding: 8px 15px;
+    border-radius: 5px;
+    margin: 5px;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+.btn-navbar:hover {
+    background-color: #c82333;
+    color: white;
+}
+
+/* Línea separadora */
+#lineadebajo-navbar {
+    border-color: white;
+    border-width: 3px;
+    margin: 0;
+}
+
+/* Barra de Deportes */
+.mi-lista {
+    background: 
+        linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 50%, #2d1b00 100%),
+        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="150" height="150" opacity="0.03"><defs><pattern id="grid" width="15" height="15" patternUnits="userSpaceOnUse"><path d="M15,0 L0,0 L0,15" fill="none" stroke="%23ffd700" stroke-width="0.3"/></pattern></defs><rect width="150" height="150" fill="url(%23grid)"/><circle cx="75" cy="75" r="2" fill="%23ffd700" opacity="0.1"/></svg>');
+    background-attachment: fixed;
+    padding: 10px 0;
+    margin: 0;
+    border-bottom: 1px solid rgba(255,215,0,0.2);
+}
+
+/* Enlaces de Barra Deportes */
+.navlink.mi-link-barra {
+    font-weight: 600;
+    background-color: #ccc414;
+    color: black;
+    text-decoration: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    display: inline-block;
+    margin: 0 5px;
+}
+
+.navlink.mi-link-barra:hover {
+    background-color: #ad8a1f;
+    color: black;
+}
+
+/* Container Fluid específico para navbar */
+.container-fluid {
+    margin-left: 70px;
+}
+
+/* ===== FIN NAVBAR CONSOLIDADO ===== */
