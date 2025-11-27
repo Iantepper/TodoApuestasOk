@@ -24,6 +24,6 @@
       </div>
 </div>
 
-<c:import url="componentesHTML/footer.jsp" />
+    <c:import url="componentesHTML/footer.jsp" />
 </body>
 </html>

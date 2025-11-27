@@ -41,7 +41,7 @@ Configuración de Base de Datos
 5. Click Importar
 
  Configuración en `persistence.xml`:
-
+xml
 <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/apuesta"/>
 <property name="jakarta.persistence.jdbc.user" value="root"/>
 <property name="jakarta.persistence.jdbc.password" value=""/>
