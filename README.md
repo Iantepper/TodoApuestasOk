@@ -40,8 +40,9 @@ Configuración de Base de Datos
 4. Ir a Importar → Seleccionar `BaseDatos/apuesta.sql`
 5. Click Importar
 
- Configuración en `persistence.xml`:
-xml
+Configuración en `persistence.xml`:
+
+```xml
 <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/apuesta"/>
 <property name="jakarta.persistence.jdbc.user" value="root"/>
 <property name="jakarta.persistence.jdbc.password" value=""/>
