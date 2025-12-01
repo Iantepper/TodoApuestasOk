@@ -16,7 +16,9 @@
                         <div class="mb-3">
                             <input type="number" class="form-control input-monto" 
                                    placeholder="$$$$" name="monto" min="1" required
-                                   oninput="validarMonto(this)">
+                                   oninput="validarMonto(this)"
+                                   style="color: #000000 !important; background-color: #ffffff !important; border: 2px solid #28a745 !important;">
+>
                             <input type="hidden" name="por" value="local">
                             <input type="hidden" name="idPartido" value="${partido.idPartido}">
                         </div>
@@ -69,7 +71,9 @@
                         <div class="mb-3">
                             <input type="number" class="form-control input-monto" 
                                    placeholder="$$$$" name="monto" min="1" required
-                                   oninput="validarMonto(this)">
+                                   oninput="validarMonto(this)"
+                                   style="color: #000000 !important; background-color: #ffffff !important; border: 2px solid #28a745 !important;">
+>
                             <input type="hidden" name="por" value="visitante">
                             <input type="hidden" name="idPartido" value="${partido.idPartido}">
                         </div>

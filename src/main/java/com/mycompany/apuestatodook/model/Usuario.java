@@ -1,4 +1,5 @@
 package com.mycompany.apuestatodook.model;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -20,18 +21,19 @@ public class Usuario extends UsuarioBase {
     @Column(name = "edad")
     private int edad;
 
-
     public Usuario() {}
 
-public Usuario(int id, String usuario, String contrasenia, double dinero, 
-               String dni, String nombre, String apellido, int edad) {
-    super(id, usuario, contrasenia, "user"); // user fuera
-    this.dinero = dinero;
-    this.dni = dni;
-    this.nombre = nombre;
-    this.apellido = apellido;
-    this.edad = edad;
-}
+    public Usuario(int id, String usuario, String contrasenia, double dinero, 
+                   String dni, String nombre, String apellido, int edad) {
+        super(id, usuario, contrasenia); 
+        this.dinero = dinero;
+        this.dni = dni;
+        this.nombre = nombre;
+        this.apellido = apellido;
+        this.edad = edad;
+    }
+
+
 
     @Override
     public boolean puedeApostar() {
@@ -39,49 +41,34 @@ public Usuario(int id, String usuario, String contrasenia, double dinero,
     }
 
     @Override
-    public boolean puedeGestionarPartidos() {
-        return false;
+    public boolean puedeGestionarPartidos() { 
+        return false; 
     }
 
     @Override
-    public boolean puedeVerTodasLasApuestas() {
-        return false;
+    public boolean puedeVerTodasLasApuestas() { 
+        return false; 
     }
+
 
 
     public double getDinero() { return dinero; }
     public void setDinero(double dinero) { this.dinero = dinero; }
-    public String getDni() { return dni; }
-    public String getNombre() { return nombre; }
-    public String getApellido() { return apellido; }
-    public int getEdad() { return edad; }
     
-    public void setUsuario(String usuario) {
-    this.usuario = usuario;
-    }
+    public String getDni() { return dni; }
+    public void setDni(String dni) { this.dni = dni; }
 
-public void setContrasenia(String contrasenia) {
-    this.contrasenia = contrasenia;
-    }
+    public String getNombre() { return nombre; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
 
+    public String getApellido() { return apellido; }
+    public void setApellido(String apellido) { this.apellido = apellido; }
+
+    public int getEdad() { return edad; }
+    public void setEdad(int edad) { this.edad = edad; }
+    
 
     public boolean tieneSaldoSuficiente(double monto) {
         return this.dinero >= monto;
     }
-    public void setDni(String dni) {
-    this.dni = dni;
 }
-
-public void setNombre(String nombre) {
-    this.nombre = nombre;
-}
-
-public void setApellido(String apellido) {
-    this.apellido = apellido;
-}
-
-public void setEdad(int edad) {
-    this.edad = edad;
-}
-}
-
