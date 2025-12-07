@@ -1,6 +1,6 @@
 package com.mycompany.apuestatodook.repositories;
 
-import com.mycompany.apuestatodook.model.EntityManagerUtil;
+import com.mycompany.apuestatodook.utils.EntityManagerUtil;
 import com.mycompany.apuestatodook.model.Usuario;
 import com.mycompany.apuestatodook.model.UsuarioBase;
 import jakarta.persistence.EntityManager;

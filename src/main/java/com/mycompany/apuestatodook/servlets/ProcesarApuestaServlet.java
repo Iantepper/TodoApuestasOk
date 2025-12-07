@@ -47,28 +47,28 @@ public class ProcesarApuestaServlet extends HttpServlet {
             int partidoId = Integer.parseInt(request.getParameter("idPartido"));
             String porQuien = request.getParameter("por");
             
-            // 4. Llamar al servicio (toda la lógica de negocio está aquí)
+            //Llamar al servicio 
             var apuesta = apuestaService.crearApuesta(monto, porQuien, usuario.getId(), partidoId);
             
-            // 5. Obtener datos para la vista
+            // Obtener datos 
             var partido = partidoService.obtenerPartido(partidoId);
             
-            // 6. Pasar datos a la vista
+ 
             request.setAttribute("apuesta", apuesta);
             request.setAttribute("partido", partido);
             request.setAttribute("premio", apuesta.getMonto() * 2);
             request.setAttribute("mensajeExito", "¡Apuesta realizada con éxito!");
             
-            // 7. Mostrar vista de confirmación
+ 
             request.getRequestDispatcher("WEB-INF/jsp/ApuestaCreada.jsp").forward(request, response);
             
         } catch (NumberFormatException e) {
             mostrarError(request, response, "Monto inválido. Ingrese un número válido.");
         } catch (IllegalArgumentException | IllegalStateException e) {
-            // Errores de validación del servicio
+
             mostrarError(request, response, e.getMessage());
         } catch (Exception e) {
-            // Error inesperado
+
             mostrarError(request, response, "Error al procesar apuesta: " + e.getMessage());
             e.printStackTrace();
         } finally {

@@ -1,4 +1,4 @@
-package com.mycompany.apuestatodook.model;
+package com.mycompany.apuestatodook.utils;
 
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;

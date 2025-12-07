@@ -12,9 +12,7 @@ public class UsuarioService {
         this.usuarioRepository = new UsuarioRepository();
     }
     
-    /**
-     * Autenticar usuario
-     */
+
     public UsuarioBase autenticar(String usuario, String contrasenia) {
         if (usuario == null || usuario.trim().isEmpty()) {
             throw new IllegalArgumentException("Usuario es requerido");
@@ -26,12 +24,10 @@ public class UsuarioService {
         return usuarioRepository.autenticar(usuario, contrasenia);
     }
     
-    /**
-     * Crear nuevo usuario
-     */
+
     public int crearUsuario(String usuario, String contrasenia, String nombre, 
                            String apellido, int edad, String dni) {
-        // Validaciones
+
         if (usuario == null || usuario.trim().isEmpty()) {
             throw new IllegalArgumentException("Usuario es requerido");
         }
@@ -51,7 +47,7 @@ public class UsuarioService {
             throw new IllegalArgumentException("La edad debe ser mayor o igual a 18 años");
         }
         
-        // Verificar si usuario ya existe
+
         if (usuarioRepository.existeUsuario(usuario)) {
             throw new IllegalArgumentException("El nombre de usuario ya existe");
         }
@@ -59,9 +55,7 @@ public class UsuarioService {
         return usuarioRepository.crearUsuario(usuario, contrasenia, nombre, apellido, edad, dni);
     }
     
-    /**
-     * Obtener saldo de usuario
-     */
+
     public double obtenerDineroUsuario(int usuarioId) {
         return usuarioRepository.getDineroPorIdUsuario(usuarioId);
     }
@@ -70,9 +64,7 @@ public class UsuarioService {
         return obtenerDineroUsuario(idUsuario);
     }
     
-    /**
-     * Actualizar saldo de usuario
-     */
+
     public void actualizarDinero(int usuarioId, double nuevoDinero) {
         if (nuevoDinero < 0) {
             throw new IllegalArgumentException("El saldo no puede ser negativo");
@@ -86,9 +78,7 @@ public class UsuarioService {
             actualizarDinero(usuarioNormal.getId(), usuarioNormal.getDinero());
         }
     }
-    /**
-     * Realizar ingreso/retiro de dinero
-     */
+
     public double operarBilletera(int usuarioId, double monto, String operacion) {
         if (monto <= 0) {
             throw new IllegalArgumentException("El monto debe ser mayor a 0");
@@ -112,9 +102,7 @@ public class UsuarioService {
         return nuevoSaldo;
     }
     
-    /**
-     * Cerrar conexiones
-     */
+
     public void close() {
         usuarioRepository.close();
     }
