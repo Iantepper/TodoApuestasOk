@@ -1,4 +1,4 @@
-package com.mycompany.apuestatodook;
+package com.mycompany.apuestatodook.servlets;
 
 import java.io.IOException;
 import jakarta.servlet.ServletException;

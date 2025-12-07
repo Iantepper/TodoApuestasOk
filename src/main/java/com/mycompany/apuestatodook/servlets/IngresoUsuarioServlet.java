@@ -1,7 +1,7 @@
-package com.mycompany.apuestatodook;
+package com.mycompany.apuestatodook.servlets;
 
 import com.mycompany.apuestatodook.model.UsuarioBase;
-import com.mycompany.apuestatodook.model.UsuarioRepository;
+import com.mycompany.apuestatodook.repositories.UsuarioRepository;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;

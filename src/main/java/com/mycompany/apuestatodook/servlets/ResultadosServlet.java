@@ -1,7 +1,7 @@
-package com.mycompany.apuestatodook;
+package com.mycompany.apuestatodook.servlets;
 
 import com.mycompany.apuestatodook.model.Partido;
-import com.mycompany.apuestatodook.model.PartidoRepository;
+import com.mycompany.apuestatodook.repositories.PartidoRepository;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;

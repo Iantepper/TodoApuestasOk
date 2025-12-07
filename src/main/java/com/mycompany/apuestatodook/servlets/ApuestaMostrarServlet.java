@@ -1,7 +1,7 @@
-package com.mycompany.apuestatodook;
+package com.mycompany.apuestatodook.servlets;
 
 import com.mycompany.apuestatodook.model.Apuesta;
-import com.mycompany.apuestatodook.model.ApuestaRepository;
+import com.mycompany.apuestatodook.repositories.ApuestaRepository;
 import com.mycompany.apuestatodook.model.UsuarioBase;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;

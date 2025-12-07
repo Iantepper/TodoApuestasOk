@@ -1,5 +1,8 @@
-package com.mycompany.apuestatodook.model;
+package com.mycompany.apuestatodook.repositories;
 
+import com.mycompany.apuestatodook.model.EntityManagerUtil;
+import com.mycompany.apuestatodook.model.Partido;
+import com.mycompany.apuestatodook.model.Resultado;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import java.util.List;

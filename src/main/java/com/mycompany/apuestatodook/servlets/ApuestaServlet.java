@@ -1,4 +1,4 @@
-package com.mycompany.apuestatodook;
+package com.mycompany.apuestatodook.servlets;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -7,10 +7,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import com.mycompany.apuestatodook.model.Partido;
-import com.mycompany.apuestatodook.model.PartidoRepository;
+import com.mycompany.apuestatodook.repositories.PartidoRepository;
 import com.mycompany.apuestatodook.model.Usuario;
 import com.mycompany.apuestatodook.model.UsuarioBase;
-import com.mycompany.apuestatodook.model.UsuarioService;
+import com.mycompany.apuestatodook.services.UsuarioService;
 
 @WebServlet(name = "SvApuesta", urlPatterns = {"/Apuesta"})
 public class ApuestaServlet extends HttpServlet {

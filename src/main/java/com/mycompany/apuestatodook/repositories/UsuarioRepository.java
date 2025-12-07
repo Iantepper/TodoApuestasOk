@@ -1,5 +1,8 @@
-package com.mycompany.apuestatodook.model;
+package com.mycompany.apuestatodook.repositories;
 
+import com.mycompany.apuestatodook.model.EntityManagerUtil;
+import com.mycompany.apuestatodook.model.Usuario;
+import com.mycompany.apuestatodook.model.UsuarioBase;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
@@ -88,6 +91,15 @@ public class UsuarioRepository {
         query.setParameter("usuario", usuario);
         return query.getSingleResult() > 0;
     }
+    
+    public UsuarioBase autenticarPorId(int idUsuario) {
+    try {
+        return em.find(UsuarioBase.class, idUsuario);
+    } catch (Exception e) {
+        System.err.println("Error al buscar usuario por ID: " + e.getMessage());
+        return null;
+    }
+}
     
     public void actualizarDinero(int idUsuario, double nuevoDinero) {
     try {
