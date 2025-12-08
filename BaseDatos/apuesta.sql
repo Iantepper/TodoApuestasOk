@@ -90,8 +90,8 @@ CREATE TABLE `resultado` (
 --
 
 INSERT INTO `resultado` (`id_resultado`, `ganador`, `fk_id_partido`) VALUES
-(1, 'Boca Juniors', 1),
-(2, 'Barcelona', 2),
+(1, 'pendiente', 1),
+(2, 'pendiente', 2),
 (3, 'pendiente', 3),
 (4, 'pendiente', 4),
 (5, 'pendiente', 5),

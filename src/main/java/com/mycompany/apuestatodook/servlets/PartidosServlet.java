@@ -26,18 +26,39 @@ public class PartidosServlet extends HttpServlet {
             throws ServletException, IOException {
 
         UsuarioBase usuario = (UsuarioBase) request.getSession().getAttribute("userLogueado");
+        
+  
+        String idEliminar = request.getParameter("eliminar");
+        if (idEliminar != null && usuario != null && usuario.puedeGestionarPartidos()) {
+            try {
+                int id = Integer.parseInt(idEliminar);
+                partidoService.eliminarPartido(id);
+  
+                response.sendRedirect(request.getContextPath() + "/Partidos?admin=true&msg=eliminado");
+                return;
+            } catch (Exception e) {
+
+                request.setAttribute("hayError", true);
+                request.setAttribute("mensajeError", "No se puede eliminar: El partido ya tiene apuestas o resultados.");
+            }
+        }
+
+
         boolean esAdmin = usuario != null && usuario.puedeGestionarPartidos();
         boolean modoAdmin = "true".equals(request.getParameter("admin"));
+        
+
+        if ("eliminado".equals(request.getParameter("msg"))) {
+            request.setAttribute("mensajeExito", "Partido eliminado correctamente.");
+        }
 
         List<Partido> partidos;
 
         try {
             if (esAdmin && modoAdmin) {
-
                 partidos = partidoService.obtenerTodosLosPartidos();
                 request.setAttribute("esAdmin", true);
             } else {
-
                 partidos = partidoService.obtenerPartidosFuturos();
                 request.setAttribute("esAdmin", false);
             }
@@ -63,28 +84,24 @@ public class PartidosServlet extends HttpServlet {
         }
 
         try {
-            if (request.getParameter("resultadoPartido") != null) {
 
+            if (request.getParameter("resultadoPartido") != null) {
                 int idPartido = Integer.parseInt(request.getParameter("idPartido"));
                 String ganador = request.getParameter("ganador");
                 partidoService.actualizarResultado(idPartido, ganador);
+            } 
 
-            } else if (request.getParameter("eliminar") != null) {
-
-                int idPartido = Integer.parseInt(request.getParameter("eliminar"));
-                partidoService.eliminarPartido(idPartido);
-
-            } else {
-
+            else {
                 String local = request.getParameter("local");
                 String visitante = request.getParameter("visitante");
-                String fecha = request.getParameter("fecha");
                 
 
-                partidoService.crearPartido(local, visitante, fecha);
+                String fechaRaw = request.getParameter("fecha");
+                String fechaNormalizada = fechaRaw.replace("T", " "); 
+                
+                partidoService.crearPartido(local, visitante, fechaNormalizada);
             }
         } catch (IllegalArgumentException e) {
-
             System.err.println("Error validación: " + e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();

@@ -2,6 +2,10 @@
 <c:import url="componentesHTML/inicioHTML.jsp" />
 <c:import url="componentesHTML/navBar-Iniciado.jsp" />
 <c:import url="componentesHTML/ul-BarraDeportes.jsp" />
+<%@ page import="java.util.Date" %>
+<%@ page import="java.text.SimpleDateFormat" %>
+<%@ page import="java.util.Arrays" %>
+<%@ page import="java.util.List" %>
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Nunito&family=Oswald:wght@600&display=swap');
@@ -12,7 +16,19 @@
 
         <div class="container mt-4">
             <h2>Gestión de Partidos - Admin</h2>
-            
+            <c:if test="${hayError}">
+        <div class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i> ${mensajeError}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </c:if>
+
+    <c:if test="${not empty mensajeExito}">
+        <div class="alert alert-success alert-dismissible fade show mb-3" role="alert">
+            <i class="fas fa-check-circle me-2"></i> ${mensajeExito}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </c:if>
             <div class="card mb-4">
                 <div class="card-header">
                     <h5>Agregar Nuevo Partido</h5>
@@ -48,33 +64,90 @@
                             <th>Acciones</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <c:forEach items="${listaDePartidos}" var="partido">
-                            <tr>
-                                <td>${partido.local}</td>
-                                <td>${partido.visitante}</td>
-                                <td>${partido.fecha}</td>
-                                <td>
-                                    <form action="${pageContext.request.contextPath}/Partidos" method="POST" class="form-inline">
-                                        <input type="hidden" name="resultadoPartido" value="true">
-                                        <input type="hidden" name="idPartido" value="${partido.idPartido}">
-                                        <select name="ganador" class="form-control form-control-sm">
-                                            <option value="">Sin resultado</option>
-                                            <option value="local" ${partido.resultado != null && partido.resultado.ganador == 'local' ? 'selected' : ''}>Local gana</option>
-                                            <option value="visitante" ${partido.resultado != null && partido.resultado.ganador == 'visitante' ? 'selected' : ''}>Visitante gana</option>
-                                            <option value="empate" ${partido.resultado != null && partido.resultado.ganador == 'empate' ? 'selected' : ''}>Empate</option>
-                                        </select>
-                                        <button type="submit" class="btn btn-info btn-sm ml-2">Guardar</button>
-                                    </form>
-                                </td>
-                                <td>
-                                    <a href="${pageContext.request.contextPath}/Partidos?admin=true&eliminar=${partido.idPartido}" 
-                                       class="btn btn-danger btn-sm"
-                                       onclick="return confirm('¿Estás seguro de eliminar este partido?')">Eliminar</a>
-                                </td>
-                            </tr>
-                        </c:forEach>
-                    </tbody>
+<tbody>
+    <c:forEach items="${listaDePartidos}" var="partido">
+        <%
+            // --- LÓGICA DE FECHAS ROBUSTA (Acepta múltiples formatos) ---
+            com.mycompany.apuestatodook.model.Partido p = (com.mycompany.apuestatodook.model.Partido) pageContext.getAttribute("partido");
+            boolean yaSeJugo = false;
+            
+            // Lista de formatos posibles que vimos en tus fotos
+            String[] formatosPosibles = {
+                "yyyy-MM-dd HH:mm:ss", // Formato SQL completo
+                "yyyy-MM-dd HH:mm",    // Formato HTML5 input
+                "yyyy-MM-dd'T'HH:mm",  // Formato con T
+                "dd/MM/yyyy HH:mm"     // Formato Latino/Español
+            };
+
+            String fechaStr = p.getFecha();
+            Date fechaPartido = null;
+
+            // Intentamos probar todos los formatos hasta que uno funcione
+            for (String formato : formatosPosibles) {
+                try {
+                    SimpleDateFormat sdf = new SimpleDateFormat(formato);
+                    sdf.setLenient(false); // Ser estricto con el formato
+                    fechaPartido = sdf.parse(fechaStr);
+                    break; // Si funcionó, salimos del loop
+                } catch (Exception e) {
+                    // Si falla, probamos el siguiente
+                }
+            }
+
+            // Si logramos entender la fecha, comparamos
+            if (fechaPartido != null) {
+                Date fechaActual = new Date();
+                if (fechaActual.after(fechaPartido)) {
+                    yaSeJugo = true;
+                }
+            } else {
+                // Si la fecha es un desastre y no se entiende, asumimos que YA SE JUGÓ para permitir editar
+                yaSeJugo = true;
+            }
+            
+            pageContext.setAttribute("yaSeJugo", yaSeJugo);
+        %>
+
+        <tr>
+            <td>${partido.local}</td>
+            <td>${partido.visitante}</td>
+            <td>${partido.fecha}</td> <td>
+                <form action="${pageContext.request.contextPath}/Partidos" method="POST" class="form-inline"
+                      onsubmit="return confirm('¿Confirmar el resultado del partido? Esta acción calculará los ganadores.');">
+                    
+                    <input type="hidden" name="resultadoPartido" value="true">
+                    <input type="hidden" name="idPartido" value="${partido.idPartido}">
+                    
+                    <select name="ganador" class="form-control form-control-sm" ${!yaSeJugo ? 'disabled' : ''} 
+                            style="${!yaSeJugo ? 'background-color: #e9ecef; cursor: not-allowed;' : ''}">
+                        
+                        <option value="" ${partido.resultado == null ? 'selected' : ''}>
+                            ${!yaSeJugo ? 'Esperando fecha...' : 'Sin resultado'}
+                        </option>
+                        <option value="local" ${partido.resultado != null && partido.resultado.ganador == 'local' ? 'selected' : ''}>
+                            Local gana
+                        </option>
+                        <option value="visitante" ${partido.resultado != null && partido.resultado.ganador == 'visitante' ? 'selected' : ''}>
+                            Visitante gana
+                        </option>
+                        <option value="empate" ${partido.resultado != null && partido.resultado.ganador == 'empate' ? 'selected' : ''}>
+                            Empate
+                        </option>
+                    </select>
+
+                    <c:if test="${yaSeJugo}">
+                        <button type="submit" class="btn btn-info btn-sm ml-2">Guardar</button>
+                    </c:if>
+                </form>
+            </td>
+            <td>
+                <a href="${pageContext.request.contextPath}/Partidos?admin=true&eliminar=${partido.idPartido}" 
+                   class="btn btn-danger btn-sm"
+                   onclick="return confirm('¿Estás seguro de eliminar este partido? ATENCIÓN: Si tiene apuestas asociadas no se podrá borrar.')">Eliminar</a>
+            </td>
+        </tr>
+    </c:forEach>
+</tbody>
                 </table>
             </div>
         </div>

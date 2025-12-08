@@ -2,6 +2,7 @@
 <c:import url="componentesHTML/inicioHTML.jsp" />
 <c:import url="componentesHTML/navBar-Iniciado.jsp" />
 <c:import url="componentesHTML/ul-BarraDeportes.jsp" />
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 
 <div class="container mt-4">
     <div class="apuesta-container">
@@ -49,7 +50,9 @@
                     <div class="saldo-info">
                         <i class="fas fa-wallet me-2"></i>
                         <div class="info-text">Tu Saldo</div>
-                        <div class="saldo-amount">$${dineroUsuario}</div>
+                        <div class="saldo-amount">
+    $ <fmt:formatNumber value="${dineroUsuario}" type="number" minFractionDigits="2" maxFractionDigits="2"/>
+</div>
                     </div>
                     
                     <div class="mt-3 info-text">
