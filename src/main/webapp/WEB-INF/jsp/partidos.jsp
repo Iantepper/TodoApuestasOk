@@ -67,22 +67,22 @@
 <tbody>
     <c:forEach items="${listaDePartidos}" var="partido">
         <%
-            // --- LÓGICA DE FECHAS ROBUSTA (Acepta múltiples formatos) ---
+        
             com.mycompany.apuestatodook.model.Partido p = (com.mycompany.apuestatodook.model.Partido) pageContext.getAttribute("partido");
             boolean yaSeJugo = false;
             
-            // Lista de formatos posibles que vimos en tus fotos
+         
             String[] formatosPosibles = {
-                "yyyy-MM-dd HH:mm:ss", // Formato SQL completo
-                "yyyy-MM-dd HH:mm",    // Formato HTML5 input
-                "yyyy-MM-dd'T'HH:mm",  // Formato con T
-                "dd/MM/yyyy HH:mm"     // Formato Latino/Español
+                "yyyy-MM-dd HH:mm:ss", 
+                "yyyy-MM-dd HH:mm",   
+                "yyyy-MM-dd'T'HH:mm",  
+                "dd/MM/yyyy HH:mm"     
             };
 
             String fechaStr = p.getFecha();
             Date fechaPartido = null;
 
-            // Intentamos probar todos los formatos hasta que uno funcione
+           
             for (String formato : formatosPosibles) {
                 try {
                     SimpleDateFormat sdf = new SimpleDateFormat(formato);
@@ -90,18 +90,18 @@
                     fechaPartido = sdf.parse(fechaStr);
                     break; // Si funcionó, salimos del loop
                 } catch (Exception e) {
-                    // Si falla, probamos el siguiente
+                    
                 }
             }
 
-            // Si logramos entender la fecha, comparamos
+
             if (fechaPartido != null) {
                 Date fechaActual = new Date();
                 if (fechaActual.after(fechaPartido)) {
                     yaSeJugo = true;
                 }
             } else {
-                // Si la fecha es un desastre y no se entiende, asumimos que YA SE JUGÓ para permitir editar
+
                 yaSeJugo = true;
             }
             
