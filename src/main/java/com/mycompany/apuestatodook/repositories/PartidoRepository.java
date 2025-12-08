@@ -3,7 +3,6 @@ package com.mycompany.apuestatodook.repositories;
 import com.mycompany.apuestatodook.utils.EntityManagerUtil;
 import com.mycompany.apuestatodook.model.Partido;
 import com.mycompany.apuestatodook.model.Resultado;
-import com.mycompany.apuestatodook.repositories.ApuestaRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import java.time.LocalDateTime;
@@ -12,7 +11,7 @@ import java.util.List;
 
 public class PartidoRepository {
     
-    private EntityManager em;
+    private final EntityManager em;
     
     public PartidoRepository() {
         this.em = EntityManagerUtil.getEntityManagerFactory().createEntityManager();
@@ -68,7 +67,7 @@ private void crearResultadoInicial(int idPartido) {
             System.out.println("✅ Resultado inicial creado para partido ID: " + idPartido);
         }
     } catch (Exception e) {
-        System.out.println("⚠️  No se pudo crear resultado inicial: " + e.getMessage());
+        System.err.println("⚠️  No se pudo crear resultado inicial: " + e.getMessage());
 
     }
 }
@@ -132,7 +131,7 @@ public Resultado obtenerResultadoPorPartido(int idPartido) {
         return futuros;
         
     } catch (Exception e) {
-        System.out.println("💥 ERROR en obtenerPartidosFuturos: " + e.getMessage());
+        System.err.println("💥 ERROR en obtenerPartidosFuturos: " + e.getMessage());
         return new ArrayList<>();
     }
 }
@@ -153,7 +152,7 @@ public Resultado obtenerResultadoPorPartido(int idPartido) {
         return fechaPartido.isAfter(ahora);
         
     } catch (Exception e) {
-        System.out.println("⚠️  Error parseando fecha '" + fechaStr + "': " + e.getMessage());
+        System.err.println("⚠️  Error parseando fecha '" + fechaStr + "': " + e.getMessage());
         return false;
     }
 }

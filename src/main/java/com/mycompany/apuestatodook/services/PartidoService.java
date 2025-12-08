@@ -1,20 +1,23 @@
 package com.mycompany.apuestatodook.services;
 
 import com.mycompany.apuestatodook.model.Partido;
-import com.mycompany.apuestatodook.model.Resultado;
 import com.mycompany.apuestatodook.repositories.PartidoRepository;
 import com.mycompany.apuestatodook.repositories.ApuestaRepository;
+import com.mycompany.apuestatodook.repositories.ResultadoRepository;
+import com.mycompany.apuestatodook.model.Resultado;
 import java.time.LocalDateTime;
 import java.util.List;
 
 public class PartidoService {
     
-    private PartidoRepository partidoRepository;
-    private ApuestaRepository apuestaRepository;
+    private final PartidoRepository partidoRepository;
+    private final ApuestaRepository apuestaRepository;
+    private final ResultadoRepository resultadoRepository;
     
     public PartidoService() {
         this.partidoRepository = new PartidoRepository();
         this.apuestaRepository = new ApuestaRepository();
+        this.resultadoRepository = new ResultadoRepository();
     }
     
 
@@ -86,13 +89,23 @@ public class PartidoService {
     }
     
 
+    
     public List<Partido> obtenerPartidosConResultado() {
-        return partidoRepository.obtenerPartidosConResultado();
+
+        List<Partido> partidos = partidoRepository.obtenerPartidosConResultado();
+
+        for (Partido partido : partidos) {
+            Resultado resultado = resultadoRepository.obtenerPorPartido(partido.getIdPartido());
+            partido.setResultado(resultado);
+        }
+        
+        return partidos;
     }
     
 
     public void close() {
         partidoRepository.close();
         apuestaRepository.close();
+        resultadoRepository.close();
     }
 }

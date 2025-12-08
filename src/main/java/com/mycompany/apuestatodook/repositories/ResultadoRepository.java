@@ -9,7 +9,7 @@ import java.util.List;
 
 public class ResultadoRepository {
     
-    private EntityManager em;
+    private final EntityManager em;
     
     public ResultadoRepository() {
         this.em = EntityManagerUtil.getEntityManagerFactory().createEntityManager();

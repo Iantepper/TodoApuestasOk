@@ -6,7 +6,7 @@ import com.mycompany.apuestatodook.repositories.UsuarioRepository;
 
 public class UsuarioService {
     
-    private UsuarioRepository usuarioRepository;
+    private final UsuarioRepository usuarioRepository;
     
     public UsuarioService() {
         this.usuarioRepository = new UsuarioRepository();

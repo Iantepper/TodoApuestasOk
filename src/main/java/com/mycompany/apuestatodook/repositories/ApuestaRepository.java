@@ -133,6 +133,31 @@ public class ApuestaRepository {
         }
     }
     
+    public List<Apuesta> obtenerPorPartidoConDetalles(int partidoId) {
+    TypedQuery<Apuesta> query = em.createQuery(
+        "SELECT a FROM Apuesta a " +
+        "LEFT JOIN FETCH a.usuario " +
+        "LEFT JOIN FETCH a.partido " +
+        "WHERE a.fkIdPartido = :partidoId " +
+        "ORDER BY a.idApuesta DESC", 
+        Apuesta.class
+    );
+    query.setParameter("partidoId", partidoId);
+    
+    List<Apuesta> apuestas = query.getResultList();
+    
+    // Cargar detalles adicionales
+    for (Apuesta apuesta : apuestas) {
+        if (apuesta.getPartido() != null) {
+            apuesta.setLocal(apuesta.getPartido().getLocal());
+            apuesta.setVisitante(apuesta.getPartido().getVisitante());
+            apuesta.setFecha(apuesta.getPartido().getFecha());
+        }
+    }
+    
+    return apuestas;
+}
+    
     public void close() {
         if (em != null && em.isOpen()) {
             em.close();

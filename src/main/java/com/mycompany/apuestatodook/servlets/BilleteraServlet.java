@@ -1,7 +1,7 @@
 package com.mycompany.apuestatodook.servlets;
 
-import com.mycompany.apuestatodook.model.UsuarioBase;
 import com.mycompany.apuestatodook.model.Usuario;
+import com.mycompany.apuestatodook.model.UsuarioBase;
 import com.mycompany.apuestatodook.services.UsuarioService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -11,97 +11,78 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @WebServlet(name = "SvBilletera", urlPatterns = "/Billetera")
-public class BilleteraServlet extends HttpServlet{
-    
+public class BilleteraServlet extends HttpServlet {
+
+    private UsuarioService usuarioService;
+
+    @Override
+    public void init() throws ServletException {
+        this.usuarioService = new UsuarioService();
+    }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
         UsuarioBase usuario = (UsuarioBase) request.getSession().getAttribute("userLogueado");
         
-        if (usuario != null && usuario.puedeGestionarPartidos()) {
-            response.sendRedirect(request.getContextPath() + "/Partidos?admin=true");
-            return;
-        }
-        
+
         if (!(usuario instanceof Usuario)) {
             response.sendRedirect(request.getContextPath() + "/Partidos");
             return;
         }
-        
-        UsuarioService usuarioService = null;
-        try {
-            usuarioService = new UsuarioService();
-            Usuario usuarioNormal = (Usuario) usuario;
-            int IDusuario = usuarioNormal.getId();
 
-            double dineroDisponible = usuarioService.getDineroPorIdUsuario(IDusuario);
+        try {
+ 
+            double dineroActual = usuarioService.getDineroPorIdUsuario(usuario.getId());
             
-            usuarioNormal.setDinero(dineroDisponible);
-            request.getSession().setAttribute("userLogueado", usuarioNormal);
+ 
+            ((Usuario) usuario).setDinero(dineroActual);
             
-            request.setAttribute("dinero", dineroDisponible);
+            request.setAttribute("dinero", dineroActual);
             request.getRequestDispatcher("WEB-INF/jsp/billetera.jsp").forward(request, response);
-        } finally {
-            if (usuarioService != null) {
-                usuarioService.close();
-            }
+            
+        } catch (Exception e) {
+            response.sendRedirect(request.getContextPath() + "/Partidos");
         }
     }
- 
+
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         UsuarioBase usuario = (UsuarioBase) req.getSession().getAttribute("userLogueado");
-        
+
         if (!(usuario instanceof Usuario)) {
             resp.sendRedirect(req.getContextPath() + "/Partidos");
             return;
         }
-        
-        UsuarioService usuarioService = null;
-        try {
-            usuarioService = new UsuarioService();
-            Usuario usuarioNormal = (Usuario) usuario;
-            int IDusuario = usuarioNormal.getId();
 
-            double dineroDisponible = usuarioService.getDineroPorIdUsuario(IDusuario);
+        try {
             String operacion = req.getParameter("Modificar");
             String montoSTR = req.getParameter("monto");
-            double monto = 0;
-            
-            if(montoSTR != null && !montoSTR.trim().isEmpty()){
-                monto = Double.parseDouble(montoSTR);   
-            } else {
-                req.setAttribute("hayError", true);
-                req.setAttribute("mensajeError", "Debe ingresar un monto por favor.");
-                req.setAttribute("dinero", dineroDisponible);
-                req.getRequestDispatcher("WEB-INF/jsp/billetera.jsp").forward(req, resp);
-                return;
-            }
+            double monto = (montoSTR != null && !montoSTR.isEmpty()) ? Double.parseDouble(montoSTR) : 0;
 
-            if (operacion.equals("ingreso")) {
-                dineroDisponible += monto;
-            } else {
-                if (dineroDisponible >= monto) {
-                    dineroDisponible -= monto;
-                } else {
-                    req.setAttribute("dinero", dineroDisponible);
-                    req.setAttribute("hayError", true);
-                    req.setAttribute("mensajeError", "Saldo insuficiente para el retiro.");
-                    req.getRequestDispatcher("WEB-INF/jsp/billetera.jsp").forward(req, resp);
-                    return;
-                }
-            }
 
-            usuarioNormal.setDinero(dineroDisponible);
-            usuarioService.updateDinero(usuarioNormal);
-            
-            req.getSession().setAttribute("userLogueado", usuarioNormal);
+            double nuevoSaldo = usuarioService.operarBilletera(usuario.getId(), monto, operacion);
+
+
+            ((Usuario) usuario).setDinero(nuevoSaldo);
+            req.getSession().setAttribute("userLogueado", usuario);
             resp.sendRedirect(req.getContextPath() + "/Billetera");
-        } finally {
-            if (usuarioService != null) {
-                usuarioService.close();
-            }
+
+        } catch (IllegalArgumentException | IllegalStateException e) {
+
+            req.setAttribute("hayError", true);
+            req.setAttribute("mensajeError", e.getMessage());
+            doGet(req, resp); 
+        } catch (Exception e) {
+            req.setAttribute("hayError", true);
+            req.setAttribute("mensajeError", "Error inesperado.");
+            doGet(req, resp);
         }
     }
-} 
+
+    @Override
+    public void destroy() {
+        if (usuarioService != null) usuarioService.close();
+    }
+}

@@ -8,7 +8,21 @@ public class EntityManagerUtil {
     
     public static EntityManagerFactory getEntityManagerFactory() {
         if (emf == null) {
-            emf = Persistence.createEntityManagerFactory("apuestaPU");
+            try {
+                System.out.println(">>> INICIANDO: Intentando leer persistence.xml y crear EntityManagerFactory...");
+                
+  
+                emf = Persistence.createEntityManagerFactory("apuestaPU");
+                
+                System.out.println(">>> ÉXITO: EntityManagerFactory creada correctamente.");
+            } catch (Throwable ex) {
+
+                System.err.println(">>> ERROR FATAL: No se pudo crear EntityManagerFactory.");
+                System.err.println(">>> Causa: " + ex.getMessage());
+                ex.printStackTrace(); 
+                
+                throw new ExceptionInInitializerError(ex);
+            }
         }
         return emf;
     }
@@ -16,6 +30,7 @@ public class EntityManagerUtil {
     public static void closeEntityManagerFactory() {
         if (emf != null && emf.isOpen()) {
             emf.close();
+            System.out.println(">>> CERRADO: EntityManagerFactory cerrada.");
         }
     }
 }

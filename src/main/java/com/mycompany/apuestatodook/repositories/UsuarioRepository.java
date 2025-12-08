@@ -9,7 +9,7 @@ import jakarta.persistence.TypedQuery;
 
 public class UsuarioRepository {
     
-    private EntityManager em;
+    private final EntityManager em;
     
     public UsuarioRepository() {
         this.em = EntityManagerUtil.getEntityManagerFactory().createEntityManager();

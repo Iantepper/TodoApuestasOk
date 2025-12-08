@@ -1,7 +1,7 @@
 package com.mycompany.apuestatodook.servlets;
 
 import com.mycompany.apuestatodook.model.UsuarioBase;
-import com.mycompany.apuestatodook.repositories.UsuarioRepository;
+import com.mycompany.apuestatodook.services.UsuarioService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -13,6 +13,13 @@ import java.io.IOException;
 @WebServlet(name = "SvIngresosoUsuario", urlPatterns = {"/IngresoUsuario"})
 public class IngresoUsuarioServlet extends HttpServlet {
     
+    private UsuarioService usuarioService;
+
+    @Override
+    public void init() {
+        this.usuarioService = new UsuarioService();
+    }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -27,10 +34,9 @@ public class IngresoUsuarioServlet extends HttpServlet {
         String usuario = request.getParameter("usuario");
         String contrasenia = request.getParameter("Contraseña");
         
-        UsuarioRepository usuarioRepo = null;
         try {
-            usuarioRepo = new UsuarioRepository();
-            UsuarioBase user = usuarioRepo.autenticar(usuario, contrasenia);
+
+            UsuarioBase user = usuarioService.autenticar(usuario, contrasenia);
             
             if (user != null) {
                 String haciaDondeIba = request.getParameter("deDondeViene");
@@ -39,24 +45,30 @@ public class IngresoUsuarioServlet extends HttpServlet {
                 session.setAttribute("userLogueado", user);
                 session.setAttribute("tipoUsuario", user.getTipo());
                 
-                if (haciaDondeIba != null) {
+                if (haciaDondeIba != null && !haciaDondeIba.isEmpty()) {
                     response.sendRedirect(request.getContextPath() + haciaDondeIba);
                 } else {
-                    response.sendRedirect(request.getContextPath() + "/principaliniciado.jsp");            
+                    response.sendRedirect(request.getContextPath() + "/Partidos");         
                 }
             } else {
                 request.setAttribute("hayError", true);
                 request.setAttribute("mensajeError", "Credenciales incorrectas!");
                 doGet(request, response);
             }
+        } catch (IllegalArgumentException e) {
+ 
+            request.setAttribute("hayError", true);
+            request.setAttribute("mensajeError", e.getMessage());
+            doGet(request, response);
         } catch (Exception e) {
             request.setAttribute("hayError", true);
-            request.setAttribute("mensajeError", "Error en el sistema. Intente más tarde.");
+            request.setAttribute("mensajeError", "Error en el sistema.");
             doGet(request, response);
-        } finally {
-            if (usuarioRepo != null) {
-                usuarioRepo.close();
-            }
         }
+    }
+
+    @Override
+    public void destroy() {
+        if (usuarioService != null) usuarioService.close();
     }
 }

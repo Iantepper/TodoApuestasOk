@@ -7,13 +7,22 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import com.mycompany.apuestatodook.model.Partido;
-import com.mycompany.apuestatodook.repositories.PartidoRepository;
 import com.mycompany.apuestatodook.model.Usuario;
 import com.mycompany.apuestatodook.model.UsuarioBase;
+import com.mycompany.apuestatodook.services.PartidoService;
 import com.mycompany.apuestatodook.services.UsuarioService;
 
 @WebServlet(name = "SvApuesta", urlPatterns = {"/Apuesta"})
 public class ApuestaServlet extends HttpServlet {
+
+    private PartidoService partidoService;
+    private UsuarioService usuarioService;
+
+    @Override
+    public void init() {
+        this.partidoService = new PartidoService();
+        this.usuarioService = new UsuarioService();
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -25,39 +34,39 @@ public class ApuestaServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/Partidos?admin=true");
             return;
         }
-        
-        int partidoId = Integer.parseInt(request.getParameter("id"));
-        
-        PartidoRepository partidoRepo = null;
-        UsuarioService usuarioService = null;
-        
+        String error = request.getParameter("error");
+    String msg = request.getParameter("msg");
+    
+    if ("true".equals(error) && msg != null) {
+        request.setAttribute("hayError", true);
+        // Decodificar el mensaje (quitar los %20, etc.)
+        request.setAttribute("mensajeError", java.net.URLDecoder.decode(msg, java.nio.charset.StandardCharsets.UTF_8));
+    }
         try {
-            partidoRepo = new PartidoRepository();
-            usuarioService = new UsuarioService();
+            int partidoId = Integer.parseInt(request.getParameter("id"));
             
-            Partido partido = partidoRepo.obtenerPorId(partidoId);      
-            request.setAttribute("partido", partido);
-
+            // sericios
+            Partido partido = partidoService.obtenerPartido(partidoId);      
             double dineroUsuario = usuarioService.getDineroPorIdUsuario(usuario.getId());
 
+
             if (usuario instanceof Usuario) {
-                Usuario usuarioNormal = (Usuario) usuario;
-                usuarioNormal.setDinero(dineroUsuario);
+                ((Usuario) usuario).setDinero(dineroUsuario);
             }
             
+            request.setAttribute("partido", partido);
             request.setAttribute("dineroUsuario", dineroUsuario);
             request.getRequestDispatcher("WEB-INF/jsp/apuesta.jsp").forward(request, response);
             
         } catch (Exception e) {
-            System.err.println("❌ Error en Apuesta]: " + e.getMessage());
-
-        } finally {
-            if (partidoRepo != null) {
-                partidoRepo.close();
-            }
-            if (usuarioService != null) {
-                usuarioService.close();
-            }
+            System.err.println("❌ Error en Apuesta: " + e.getMessage());
+            response.sendRedirect(request.getContextPath() + "/Partidos");
         }
+    }
+
+    @Override
+    public void destroy() {
+        if (partidoService != null) partidoService.close();
+        if (usuarioService != null) usuarioService.close();
     }
 }
