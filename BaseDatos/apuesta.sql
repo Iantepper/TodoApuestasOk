@@ -37,17 +37,8 @@ CREATE TABLE `apuesta` (
   `fk_id_resultado` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Volcado de datos para la tabla `apuesta`
---
 
-INSERT INTO `apuesta` (`id_apuesta`, `monto`, `por_quien`, `estado`, `fk_id_usuario`, `fk_id_partido`, `fk_id_resultado`) VALUES
-(1, 100, 'Boca Juniors', 'G', 2, 1, 1),
-(2, 50, 'River Plate', 'P', 3, 1, 1),
-(3, 200, 'Barcelona', 'G', 2, 2, 2),
-(4, 75, 'Real Madrid', 'P', 4, 2, 2);
 
--- --------------------------------------------------------
 
 --
 -- Estructura de tabla para la tabla `partido`
