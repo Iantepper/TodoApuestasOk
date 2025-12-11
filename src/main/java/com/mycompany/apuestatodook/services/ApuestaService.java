@@ -55,7 +55,7 @@ public class ApuestaService {
         }
         
 
-        Partido partido = obtenerPartidoValidado(partidoId);
+        obtenerPartidoValidado(partidoId);
         
 
         validarPartidoSinResultado(partidoId);
