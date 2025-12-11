@@ -11,25 +11,21 @@ public class IndexServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String destino = null;
+        
         String action = request.getParameter("action");
+        //si action es null
+        String destino = "/WEB-INF/jsp/inicioSesion.jsp"; 
 
-        if (action != null) {
-            switch (action) {
-                case "inicioSesion":
-                    destino = "/WEB-INF/jsp/inicioSesion.jsp";
-                    break;
-                case "newUsuarios":
-                    destino = "/WEB-INF/jsp/crearUsuario.jsp";
-                    break;
-                case "errorIngresoUsuario":
-                    destino = "/WEB-INF/jsp/errorIngresoUsuario.jsp";
-                    break;
-                case "usuarioCreado":
-                    destino = "/WEB-INF/jsp/usuarioCreado.jsp";
-                    break;
-            }
+        if ("inicioSesion".equals(action)) {
+            destino = "/WEB-INF/jsp/inicioSesion.jsp";
+        } else if ("newUsuarios".equals(action)) {
+            destino = "/WEB-INF/jsp/crearUsuario.jsp";
+        } else if ("errorIngresoUsuario".equals(action)) {
+            destino = "/WEB-INF/jsp/errorIngresoUsuario.jsp";
+        } else if ("usuarioCreado".equals(action)) {
+            destino = "/WEB-INF/jsp/usuarioCreado.jsp";
         }
+
         request.getRequestDispatcher(destino).forward(request, response);
     }
 

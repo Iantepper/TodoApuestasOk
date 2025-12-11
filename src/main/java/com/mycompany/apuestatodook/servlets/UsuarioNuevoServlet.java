@@ -18,7 +18,7 @@ public class UsuarioNuevoServlet extends HttpServlet {
         this.usuarioService = new UsuarioService();
     }
 
-    @Override
+@Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String usuario = request.getParameter("usuario");
         String password = request.getParameter("password");
@@ -33,26 +33,25 @@ public class UsuarioNuevoServlet extends HttpServlet {
             request.setAttribute("hayError", true);
             request.setAttribute("mensajeError", "Las contraseñas no coinciden.");
             request.getRequestDispatcher("/WEB-INF/jsp/crearUsuario.jsp").forward(request, response);
-            return;
-        }
+            
+        } else {
+            try {
+                int edad = (edadStr != null && !edadStr.isEmpty()) ? Integer.parseInt(edadStr) : 0;
 
-        try {
-            int edad = (edadStr != null && !edadStr.isEmpty()) ? Integer.parseInt(edadStr) : 0;
+                usuarioService.crearUsuario(usuario, password, nombre, apellido, edad, dni);
 
+                request.getRequestDispatcher("/WEB-INF/jsp/usuarioCreado.jsp").forward(request, response);
 
-            usuarioService.crearUsuario(usuario, password, nombre, apellido, edad, dni);
-
-            request.getRequestDispatcher("/WEB-INF/jsp/usuarioCreado.jsp").forward(request, response);
-
-        } catch (IllegalArgumentException e) {
-            request.setAttribute("hayError", true);
-            request.setAttribute("mensajeError", e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/jsp/crearUsuario.jsp").forward(request, response);
-        } catch (Exception e) {
-            System.err.println("❌ Error sistema: " + e.getMessage());
-            request.setAttribute("hayError", true);
-            request.setAttribute("mensajeError", "Error del sistema. Intente más tarde.");
-            request.getRequestDispatcher("/WEB-INF/jsp/crearUsuario.jsp").forward(request, response);
+            } catch (IllegalArgumentException e) {
+                request.setAttribute("hayError", true);
+                request.setAttribute("mensajeError", e.getMessage());
+                request.getRequestDispatcher("/WEB-INF/jsp/crearUsuario.jsp").forward(request, response);
+            } catch (Exception e) {
+                System.err.println("❌ Error sistema: " + e.getMessage());
+                request.setAttribute("hayError", true);
+                request.setAttribute("mensajeError", "Error del sistema. Intente más tarde.");
+                request.getRequestDispatcher("/WEB-INF/jsp/crearUsuario.jsp").forward(request, response);
+            }
         }
     }
 

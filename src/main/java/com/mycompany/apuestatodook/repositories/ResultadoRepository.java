@@ -39,34 +39,43 @@ public class ResultadoRepository {
     }
     
 
-    public Resultado obtenerPorPartido(int idPartido) {
-        TypedQuery<Resultado> query = em.createQuery(
-            "SELECT r FROM Resultado r WHERE r.partido.idPartido = :idPartido", 
-            Resultado.class
-        );
-        query.setParameter("idPartido", idPartido);
-        
-        try {
-            return query.getSingleResult();
-        } catch (Exception e) {
-            return null; 
-        }
+public Resultado obtenerPorPartido(int idPartido) {
+
+    Resultado resultado = null;
+
+    TypedQuery<Resultado> query = em.createQuery(
+        "SELECT r FROM Resultado r WHERE r.partido.idPartido = :idPartido", 
+        Resultado.class
+    );
+    query.setParameter("idPartido", idPartido);
+    
+    try {
+        resultado = query.getSingleResult();
+    } catch (Exception e) {
+
+        resultado = null; 
     }
+    return resultado;
+}
     
   
-    public int obtenerIdResultadoPorPartido(int idPartido) {
-        TypedQuery<Integer> query = em.createQuery(
-            "SELECT r.idResultado FROM Resultado r WHERE r.partido.idPartido = :idPartido", 
-            Integer.class
-        );
-        query.setParameter("idPartido", idPartido);
-        
-        try {
-            return query.getSingleResult();
-        } catch (Exception e) {
-            throw new RuntimeException("No se encontró resultado para el partido con id " + idPartido);
-        }
+public int obtenerIdResultadoPorPartido(int idPartido) {
+    int idResultado = 0;
+
+    TypedQuery<Integer> query = em.createQuery(
+        "SELECT r.idResultado FROM Resultado r WHERE r.partido.idPartido = :idPartido", 
+        Integer.class
+    );
+    query.setParameter("idPartido", idPartido);
+    
+    try {
+        idResultado = query.getSingleResult();
+    } catch (Exception e) {
+        throw new RuntimeException("No se encontró resultado para el partido con id " + idPartido);
     }
+    
+    return idResultado;
+}
     
 
     public void actualizar(Resultado resultado) {

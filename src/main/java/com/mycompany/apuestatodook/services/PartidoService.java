@@ -75,12 +75,16 @@ public class PartidoService {
     
 
     private boolean esFechaFutura(String fechaStr) {
+        boolean esFutura = false;
+
         try {
             LocalDateTime fechaPartido = LocalDateTime.parse(fechaStr.replace(" ", "T"));
-            return fechaPartido.isAfter(LocalDateTime.now());
+            esFutura = fechaPartido.isAfter(LocalDateTime.now());
         } catch (Exception e) {
-            return false;
+            esFutura = false;
         }
+
+        return esFutura;
     }
     
 

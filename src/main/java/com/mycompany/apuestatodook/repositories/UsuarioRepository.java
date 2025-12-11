@@ -16,7 +16,9 @@ public class UsuarioRepository {
     }
     
     // aunt
-    public UsuarioBase autenticar(String usuario, String contrasenia) {
+public UsuarioBase autenticar(String usuario, String contrasenia) {
+        UsuarioBase usuarioEncontrado = null;
+
         try {
             TypedQuery<UsuarioBase> query = em.createQuery(
                 "SELECT u FROM UsuarioBase u WHERE u.usuario = :usuario AND u.contrasenia = :contrasenia", 
@@ -25,16 +27,20 @@ public class UsuarioRepository {
             query.setParameter("usuario", usuario);
             query.setParameter("contrasenia", contrasenia);
             
-            UsuarioBase usuarioBase = query.getSingleResult();
-            return usuarioBase;
+            usuarioEncontrado = query.getSingleResult();
             
         } catch (NoResultException e) {
-            return null;
+            usuarioEncontrado = null;
         }
+
+        return usuarioEncontrado;
     }
     
 
-    public int crearUsuario(String usuario, String contrasenia, String nombre, String apellido, int edad, String dni) {
+public int crearUsuario(String usuario, String contrasenia, String nombre, String apellido, int edad, String dni) {
+        int idGenerado = 0;
+        RuntimeException excepcion = null;
+
         try {
             em.getTransaction().begin();
             
@@ -50,14 +56,20 @@ public class UsuarioRepository {
             em.persist(nuevoUsuario);
             em.getTransaction().commit();
             
-            return nuevoUsuario.getId();
+            idGenerado = nuevoUsuario.getId();
             
         } catch (Exception e) {
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }
-            throw new RuntimeException("Error al crear usuario", e);
+            excepcion = new RuntimeException("Error al crear usuario", e);
         }
+
+        if (excepcion != null) {
+            throw excepcion;
+        }
+
+        return idGenerado;
     }
     
  
@@ -92,14 +104,18 @@ public class UsuarioRepository {
         return query.getSingleResult() > 0;
     }
     
-    public UsuarioBase autenticarPorId(int idUsuario) {
-    try {
-        return em.find(UsuarioBase.class, idUsuario);
-    } catch (Exception e) {
-        System.err.println("Error al buscar usuario por ID: " + e.getMessage());
-        return null;
+public UsuarioBase autenticarPorId(int idUsuario) {
+        UsuarioBase usuarioEncontrado = null;
+
+        try {
+            usuarioEncontrado = em.find(UsuarioBase.class, idUsuario);
+        } catch (Exception e) {
+            System.err.println("Error al buscar usuario por ID: " + e.getMessage());
+            usuarioEncontrado = null;
+        }
+
+        return usuarioEncontrado;
     }
-}
     
     public void actualizarDinero(int idUsuario, double nuevoDinero) {
     try {

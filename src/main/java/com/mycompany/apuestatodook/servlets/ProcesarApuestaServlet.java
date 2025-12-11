@@ -19,11 +19,10 @@ public class ProcesarApuestaServlet extends HttpServlet {
 
 
     
-    @Override
+@Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         
-
         ApuestaService apuestaService = new ApuestaService();
         PartidoService partidoService = new PartidoService();
         
@@ -32,30 +31,28 @@ public class ProcesarApuestaServlet extends HttpServlet {
 
             if (usuario == null) {
                 redirigirALogin(request, response);
-                return;
-            }
-
-            if (!usuario.puedeApostar() || !(usuario instanceof Usuario)) {
-                mostrarError(request, response, "Este tipo de usuario no puede realizar apuestas");
-                return;
-            }
-
-            int monto = Integer.parseInt(request.getParameter("monto"));
-            int partidoId = Integer.parseInt(request.getParameter("idPartido"));
-            String porQuien = request.getParameter("por");
             
  
-            Apuesta apuesta = apuestaService.crearApuesta(monto, porQuien, usuario.getId(), partidoId);
+            } else if (!usuario.puedeApostar() || !(usuario instanceof Usuario)) {
+                mostrarError(request, response, "Este tipo de usuario no puede realizar apuestas");
             
 
-            Partido partido = partidoService.obtenerPartido(partidoId);
-            
-            request.setAttribute("apuesta", apuesta);
-            request.setAttribute("partido", partido);
-            request.setAttribute("premio", apuesta.getMonto() * 2);
-            request.setAttribute("mensajeExito", "¡Apuesta realizada con éxito!");
-            
-            request.getRequestDispatcher("WEB-INF/jsp/ApuestaCreada.jsp").forward(request, response);
+            } else {
+                int monto = Integer.parseInt(request.getParameter("monto"));
+                int partidoId = Integer.parseInt(request.getParameter("idPartido"));
+                String porQuien = request.getParameter("por");
+                
+                Apuesta apuesta = apuestaService.crearApuesta(monto, porQuien, usuario.getId(), partidoId);
+                
+                Partido partido = partidoService.obtenerPartido(partidoId);
+                
+                request.setAttribute("apuesta", apuesta);
+                request.setAttribute("partido", partido);
+                request.setAttribute("premio", apuesta.getMonto() * 2);
+                request.setAttribute("mensajeExito", "¡Apuesta realizada con éxito!");
+                
+                request.getRequestDispatcher("WEB-INF/jsp/ApuestaCreada.jsp").forward(request, response);
+            }
             
         } catch (NumberFormatException e) {
             mostrarError(request, response, "Monto inválido. Ingrese un número válido.");
@@ -65,7 +62,6 @@ public class ProcesarApuestaServlet extends HttpServlet {
             e.printStackTrace(); 
             mostrarError(request, response, "Error al procesar apuesta: " + e.getMessage());
         } finally {
- 
             if (apuestaService != null) apuestaService.close();
             if (partidoService != null) partidoService.close();
         }

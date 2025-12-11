@@ -20,64 +20,56 @@ public class BilleteraServlet extends HttpServlet {
         this.usuarioService = new UsuarioService();
     }
 
-    @Override
+@Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
         UsuarioBase usuario = (UsuarioBase) request.getSession().getAttribute("userLogueado");
-        
 
         if (!(usuario instanceof Usuario)) {
             response.sendRedirect(request.getContextPath() + "/Partidos");
-            return;
-        }
-
-        try {
- 
-            double dineroActual = usuarioService.getDineroPorIdUsuario(usuario.getId());
-            
- 
-            ((Usuario) usuario).setDinero(dineroActual);
-            
-            request.setAttribute("dinero", dineroActual);
-            request.getRequestDispatcher("WEB-INF/jsp/billetera.jsp").forward(request, response);
-            
-        } catch (Exception e) {
-            response.sendRedirect(request.getContextPath() + "/Partidos");
+        } else {
+            try {
+                double dineroActual = usuarioService.getDineroPorIdUsuario(usuario.getId());
+                
+                ((Usuario) usuario).setDinero(dineroActual);
+                
+                request.setAttribute("dinero", dineroActual);
+                request.getRequestDispatcher("WEB-INF/jsp/billetera.jsp").forward(request, response);
+                
+            } catch (Exception e) {
+                response.sendRedirect(request.getContextPath() + "/Partidos");
+            }
         }
     }
 
-    @Override
+@Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         UsuarioBase usuario = (UsuarioBase) req.getSession().getAttribute("userLogueado");
 
         if (!(usuario instanceof Usuario)) {
             resp.sendRedirect(req.getContextPath() + "/Partidos");
-            return;
-        }
+        } else {
+            try {
+                String operacion = req.getParameter("Modificar");
+                String montoSTR = req.getParameter("monto");
+                double monto = (montoSTR != null && !montoSTR.isEmpty()) ? Double.parseDouble(montoSTR) : 0;
 
-        try {
-            String operacion = req.getParameter("Modificar");
-            String montoSTR = req.getParameter("monto");
-            double monto = (montoSTR != null && !montoSTR.isEmpty()) ? Double.parseDouble(montoSTR) : 0;
+                double nuevoSaldo = usuarioService.operarBilletera(usuario.getId(), monto, operacion);
 
+                ((Usuario) usuario).setDinero(nuevoSaldo);
+                req.getSession().setAttribute("userLogueado", usuario);
+                resp.sendRedirect(req.getContextPath() + "/Billetera");
 
-            double nuevoSaldo = usuarioService.operarBilletera(usuario.getId(), monto, operacion);
-
-
-            ((Usuario) usuario).setDinero(nuevoSaldo);
-            req.getSession().setAttribute("userLogueado", usuario);
-            resp.sendRedirect(req.getContextPath() + "/Billetera");
-
-        } catch (IllegalArgumentException | IllegalStateException e) {
-
-            req.setAttribute("hayError", true);
-            req.setAttribute("mensajeError", e.getMessage());
-            doGet(req, resp); 
-        } catch (Exception e) {
-            req.setAttribute("hayError", true);
-            req.setAttribute("mensajeError", "Error inesperado.");
-            doGet(req, resp);
+            } catch (IllegalArgumentException | IllegalStateException e) {
+                req.setAttribute("hayError", true);
+                req.setAttribute("mensajeError", e.getMessage());
+                doGet(req, resp); 
+            } catch (Exception e) {
+                req.setAttribute("hayError", true);
+                req.setAttribute("mensajeError", "Error inesperado.");
+                doGet(req, resp);
+            }
         }
     }
 

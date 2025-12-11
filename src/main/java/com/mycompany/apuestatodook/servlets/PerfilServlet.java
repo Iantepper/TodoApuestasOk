@@ -18,25 +18,18 @@ public class PerfilServlet extends HttpServlet {
     
         UsuarioBase usuario = (UsuarioBase) request.getSession().getAttribute("userLogueado");
         
-
         if (usuario != null && usuario.puedeGestionarPartidos()) {
             response.sendRedirect(request.getContextPath() + "/Partidos?admin=true");
-            return;
-        }
-        
-
-        if (!(usuario instanceof Usuario)) {
+            
+        } else if (!(usuario instanceof Usuario)) {
             response.sendRedirect(request.getContextPath() + "/Partidos");
-            return;
+            
+        } else {
+            Usuario usuarioNormal = (Usuario) usuario;
+            
+            request.setAttribute("usuario", usuarioNormal);
+            request.getRequestDispatcher("WEB-INF/jsp/perfil.jsp").forward(request, response);
         }
-        
- 
-        Usuario usuarioNormal = (Usuario) usuario;
-        
-  
-        request.setAttribute("usuario", usuarioNormal);
-        
-        request.getRequestDispatcher("WEB-INF/jsp/perfil.jsp").forward(request, response);
     }
     
     @Override

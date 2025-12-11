@@ -21,93 +21,97 @@ public class PartidosServlet extends HttpServlet {
         this.partidoService = new PartidoService();
     }
 
-    @Override
+@Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         UsuarioBase usuario = (UsuarioBase) request.getSession().getAttribute("userLogueado");
         
-  
+        boolean cargarPagina = true;
+
         String idEliminar = request.getParameter("eliminar");
+        
         if (idEliminar != null && usuario != null && usuario.puedeGestionarPartidos()) {
             try {
                 int id = Integer.parseInt(idEliminar);
                 partidoService.eliminarPartido(id);
   
                 response.sendRedirect(request.getContextPath() + "/Partidos?admin=true&msg=eliminado");
-                return;
+                
+                // bandera
+                cargarPagina = false; 
+                
             } catch (Exception e) {
-
                 request.setAttribute("hayError", true);
                 request.setAttribute("mensajeError", "No se puede eliminar: El partido ya tiene apuestas o resultados.");
+                //mostrar error
             }
         }
 
 
-        boolean esAdmin = usuario != null && usuario.puedeGestionarPartidos();
-        boolean modoAdmin = "true".equals(request.getParameter("admin"));
-        
-
-        if ("eliminado".equals(request.getParameter("msg"))) {
-            request.setAttribute("mensajeExito", "Partido eliminado correctamente.");
-        }
-
-        List<Partido> partidos;
-
-        try {
-            if (esAdmin && modoAdmin) {
-                partidos = partidoService.obtenerTodosLosPartidos();
-                request.setAttribute("esAdmin", true);
-            } else {
-                partidos = partidoService.obtenerPartidosFuturos();
-                request.setAttribute("esAdmin", false);
+        if (cargarPagina) {
+            
+            boolean esAdmin = usuario != null && usuario.puedeGestionarPartidos();
+            boolean modoAdmin = "true".equals(request.getParameter("admin"));
+            
+            if ("eliminado".equals(request.getParameter("msg"))) {
+                request.setAttribute("mensajeExito", "Partido eliminado correctamente.");
             }
 
-            request.setAttribute("listaDePartidos", partidos);
-            request.getRequestDispatcher("WEB-INF/jsp/partidos.jsp").forward(request, response);
+            try {
+                List<Partido> partidos;
+                if (esAdmin && modoAdmin) {
+                    partidos = partidoService.obtenerTodosLosPartidos();
+                    request.setAttribute("esAdmin", true);
+                } else {
+                    partidos = partidoService.obtenerPartidosFuturos();
+                    request.setAttribute("esAdmin", false);
+                }
 
-        } catch (Exception e) {
-            request.setAttribute("hayError", true);
-            request.setAttribute("mensajeError", "Error al cargar los partidos");
-            request.getRequestDispatcher("WEB-INF/jsp/partidos.jsp").forward(request, response);
+                request.setAttribute("listaDePartidos", partidos);
+                request.getRequestDispatcher("WEB-INF/jsp/partidos.jsp").forward(request, response);
+
+            } catch (Exception e) {
+                request.setAttribute("hayError", true);
+                request.setAttribute("mensajeError", "Error al cargar los partidos");
+                request.getRequestDispatcher("WEB-INF/jsp/partidos.jsp").forward(request, response);
+            }
         }
     }
 
-    @Override
+@Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         UsuarioBase usuario = (UsuarioBase) request.getSession().getAttribute("userLogueado");
+
         if (usuario == null || !usuario.puedeGestionarPartidos()) {
+
             response.sendRedirect(request.getContextPath() + "/Index?action=inicioSesion");
-            return;
-        }
-
-        try {
-
-            if (request.getParameter("resultadoPartido") != null) {
-                int idPartido = Integer.parseInt(request.getParameter("idPartido"));
-                String ganador = request.getParameter("ganador");
-                partidoService.actualizarResultado(idPartido, ganador);
-            } 
-
-            else {
-                String local = request.getParameter("local");
-                String visitante = request.getParameter("visitante");
-                
-
-                String fechaRaw = request.getParameter("fecha");
-                String fechaNormalizada = fechaRaw.replace("T", " "); 
-                
-                partidoService.crearPartido(local, visitante, fechaNormalizada);
+            
+        } else {
+            try {
+                if (request.getParameter("resultadoPartido") != null) {
+                    int idPartido = Integer.parseInt(request.getParameter("idPartido"));
+                    String ganador = request.getParameter("ganador");
+                    partidoService.actualizarResultado(idPartido, ganador);
+                } else {
+                    String local = request.getParameter("local");
+                    String visitante = request.getParameter("visitante");
+                    
+                    String fechaRaw = request.getParameter("fecha");
+                    String fechaNormalizada = (fechaRaw != null) ? fechaRaw.replace("T", " ") : ""; 
+                    
+                    partidoService.crearPartido(local, visitante, fechaNormalizada);
+                }
+            } catch (IllegalArgumentException e) {
+                System.err.println("Error validación: " + e.getMessage());
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch (IllegalArgumentException e) {
-            System.err.println("Error validación: " + e.getMessage());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
-        response.sendRedirect(request.getContextPath() + "/Partidos?admin=true");
+            response.sendRedirect(request.getContextPath() + "/Partidos?admin=true");
+        }
     }
     
     @Override
