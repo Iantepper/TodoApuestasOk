@@ -1,5 +1,7 @@
 package com.mycompany.apuestatodook.services;
 
+import com.mycompany.apuestatodook.exceptions.MontoInvalidoException;
+import com.mycompany.apuestatodook.exceptions.SaldoInsuficienteException;
 import com.mycompany.apuestatodook.model.Apuesta;
 import com.mycompany.apuestatodook.model.Usuario;
 import com.mycompany.apuestatodook.model.Partido;
@@ -9,6 +11,7 @@ import com.mycompany.apuestatodook.repositories.UsuarioRepository;
 import com.mycompany.apuestatodook.repositories.PartidoRepository;
 import com.mycompany.apuestatodook.repositories.ResultadoRepository;
 import java.util.List;
+
 
 public class ApuestaService {
     
@@ -37,32 +40,28 @@ public class ApuestaService {
     }
     
 
-    public void validarApuesta(int usuarioId, int monto, int partidoId) {
+public void validarApuesta(int usuarioId, int monto, int partidoId) throws MontoInvalidoException {
 
-        if (monto <= 0) {
-            throw new IllegalArgumentException("El monto debe ser mayor a 0");
-        }
-        
-
-        Usuario usuario = obtenerUsuarioValidado(usuarioId);
-        
-
-        if (!usuario.tieneSaldoSuficiente(monto)) {
-            throw new IllegalStateException(
-                String.format("Saldo insuficiente. Monto: $%d | Saldo actual: $%.0f", 
-                monto, usuario.getDinero())
-            );
-        }
-        
-
-        obtenerPartidoValidado(partidoId);
-        
-
-        validarPartidoSinResultado(partidoId);
+    // CAMBIO 2: Reemplazamos IllegalArgumentException por tu excepción CHEQUEADA
+    if (monto <= 0) {
+        throw new MontoInvalidoException("El monto debe ser mayor a 0"); 
     }
     
+    Usuario usuario = obtenerUsuarioValidado(usuarioId);
+    
+    // CAMBIO 3: Reemplazamos IllegalStateException por tu excepción NO CHEQUEADA
+if (!usuario.tieneSaldoSuficiente(monto)) {
+    // Antes: throw new SaldoInsuficienteException("mensaje");
+    // Ahora: mandamos el saldo del usuario y lo que quiso apostar
+    throw new SaldoInsuficienteException(usuario.getDinero(), monto);
+}
+    
+    obtenerPartidoValidado(partidoId);
+    validarPartidoSinResultado(partidoId);
+}
+    
 
-    public Apuesta crearApuesta(int monto, String porQuien, int usuarioId, int partidoId) {
+    public Apuesta crearApuesta(int monto, String porQuien, int usuarioId, int partidoId) throws MontoInvalidoException {
 
         validarApuesta(usuarioId, monto, partidoId);
         

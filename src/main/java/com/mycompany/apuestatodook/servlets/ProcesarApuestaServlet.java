@@ -6,6 +6,8 @@ import com.mycompany.apuestatodook.model.Apuesta;
 import com.mycompany.apuestatodook.model.Partido;
 import com.mycompany.apuestatodook.model.UsuarioBase;
 import com.mycompany.apuestatodook.model.Usuario;
+import com.mycompany.apuestatodook.exceptions.MontoInvalidoException;
+import com.mycompany.apuestatodook.exceptions.SaldoInsuficienteException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -31,17 +33,15 @@ public class ProcesarApuestaServlet extends HttpServlet {
 
             if (usuario == null) {
                 redirigirALogin(request, response);
-            
- 
             } else if (!usuario.puedeApostar() || !(usuario instanceof Usuario)) {
                 mostrarError(request, response, "Este tipo de usuario no puede realizar apuestas");
-            
-
             } else {
                 int monto = Integer.parseInt(request.getParameter("monto"));
                 int partidoId = Integer.parseInt(request.getParameter("idPartido"));
                 String porQuien = request.getParameter("por");
                 
+                // Si el monto es <= 0, este método ahora lanza MontoInvalidoException
+                // Si no hay saldo, lanza SaldoInsuficienteException
                 Apuesta apuesta = apuestaService.crearApuesta(monto, porQuien, usuario.getId(), partidoId);
                 
                 Partido partido = partidoService.obtenerPartido(partidoId);
@@ -56,12 +56,21 @@ public class ProcesarApuestaServlet extends HttpServlet {
             
         } catch (NumberFormatException e) {
             mostrarError(request, response, "Monto inválido. Ingrese un número válido.");
-        } catch (IllegalArgumentException | IllegalStateException e) {
-            mostrarError(request, response, e.getMessage());
+            
+        } catch (SaldoInsuficienteException e) {
+    // Usamos el método que creamos en la excepción
+    String msg = e.getMessage() + ". Te faltan $" + e.getFaltante() + " para completar la apuesta.";
+    mostrarError(request, response, msg);
+
+} catch (MontoInvalidoException e) {
+    mostrarError(request, response, e.getMessage());
+            
         } catch (Exception e) {
             e.printStackTrace(); 
             mostrarError(request, response, "Error al procesar apuesta: " + e.getMessage());
+            
         } finally {
+            // cerrar recursos
             if (apuestaService != null) apuestaService.close();
             if (partidoService != null) partidoService.close();
         }
